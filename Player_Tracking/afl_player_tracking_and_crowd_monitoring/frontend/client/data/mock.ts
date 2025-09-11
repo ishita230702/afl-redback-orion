@@ -22,7 +22,7 @@ export const generateTimelineFromStadiumData = (crowdZones: { current: number; d
   return [
     { time: "12:00", attendance: Math.round(currentAttendance * 0.6), density: Math.round(currentDensity * 0.7), critical: 0, high: Math.max(0, currentHigh - 2) },
     { time: "13:00", attendance: Math.round(currentAttendance * 0.7), density: Math.round(currentDensity * 0.8), critical: Math.max(0, currentCritical - 1), high: Math.max(0, currentHigh - 1) },
-    { time: "14:00", attendance: Math.round(currentAttendance * 0.8), density: Math.round(currentDensity * 0.85), critical: Math.max(0, currentCritical - 1), high },
+    { time: "14:00", attendance: Math.round(currentAttendance * 0.8), density: Math.round(currentDensity * 0.85), critical: Math.max(0, currentCritical - 1), high: currentHigh },
     { time: "15:00", attendance: Math.round(currentAttendance * 0.9), density: Math.round(currentDensity * 0.9), critical: currentCritical, high: currentHigh },
     { time: "16:00", attendance: currentAttendance, density: currentDensity, critical: currentCritical, high: currentHigh },
     { time: "17:00", attendance: Math.round(currentAttendance * 0.95), density: Math.round(currentDensity * 0.95), critical: Math.max(0, currentCritical - 1), high: currentHigh },
