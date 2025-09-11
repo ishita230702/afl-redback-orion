@@ -2164,7 +2164,7 @@ Export ID: ${Date.now()}-${Math.random().toString(36).substr(2, 9)}
                                   {isExpanded && (
                                     <div className="mt-3 flex gap-2 opacity-0 animate-[fadeIn_0.5s_ease-in-out_0.3s_forwards]">
                                       <div className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-white text-xs">
-                                        �� Season MVP
+                                        🏆 Season MVP
                                       </div>
                                       <div className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-white text-xs">
                                         ��� Top Performer
@@ -2593,182 +2593,13 @@ Export ID: ${Date.now()}-${Math.random().toString(36).substr(2, 9)}
                 </Card>
 
                 {/* Player Comparison */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="w-5 h-5" />
-                      Player Comparison
-                    </CardTitle>
-                    <CardDescription>
-                      Compare {selectedPlayer.name} with another player
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-6">
-                      <Select
-                        value={comparisonPlayer.name}
-                        onValueChange={(name) => {
-                          const player = mockPlayers.find(
-                            (p) => p.name === name,
-                          );
-                          if (player) setComparisonPlayer(player);
-                        }}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select player to compare" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {mockPlayers
-                            .filter((p) => p.id !== selectedPlayer.id)
-                            .map((player) => (
-                              <SelectItem key={player.id} value={player.name}>
-                                {player.name} ({player.team})
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Progress Bar Comparison */}
-                      <div className="space-y-4">
-                        <h4 className="text-sm font-semibold text-gray-700">
-                          Statistical Comparison
-                        </h4>
-                        {[
-                          "kicks",
-                          "handballs",
-                          "marks",
-                          "tackles",
-                          "goals",
-                        ].map((stat) => (
-                          <div key={stat} className="space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span className="capitalize">{stat}</span>
-                              <span>
-                                {
-                                  selectedPlayer[
-                                    stat as keyof typeof selectedPlayer
-                                  ]
-                                }{" "}
-                                vs{" "}
-                                {
-                                  comparisonPlayer[
-                                    stat as keyof typeof comparisonPlayer
-                                  ]
-                                }
-                              </span>
-                            </div>
-                            <div className="flex gap-2">
-                              <div className="flex-1">
-                                <Progress
-                                  value={
-                                    ((selectedPlayer[
-                                      stat as keyof typeof selectedPlayer
-                                    ] as number) /
-                                      Math.max(
-                                        selectedPlayer[
-                                          stat as keyof typeof selectedPlayer
-                                        ] as number,
-                                        comparisonPlayer[
-                                          stat as keyof typeof comparisonPlayer
-                                        ] as number,
-                                      )) *
-                                    100
-                                  }
-                                  className="h-2"
-                                />
-                                <div className="text-xs text-gray-600 mt-1">
-                                  {selectedPlayer.name}
-                                </div>
-                              </div>
-                              <div className="flex-1">
-                                <Progress
-                                  value={
-                                    ((comparisonPlayer[
-                                      stat as keyof typeof comparisonPlayer
-                                    ] as number) /
-                                      Math.max(
-                                        selectedPlayer[
-                                          stat as keyof typeof selectedPlayer
-                                        ] as number,
-                                        comparisonPlayer[
-                                          stat as keyof typeof comparisonPlayer
-                                        ] as number,
-                                      )) *
-                                    100
-                                  }
-                                  className="h-2"
-                                />
-                                <div className="text-xs text-gray-600 mt-1">
-                                  {comparisonPlayer.name}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Line Chart Comparison */}
-                      <div className="space-y-4">
-                        <h4 className="text-sm font-semibold text-gray-700">
-                          Performance Trend
-                        </h4>
-                        <div className="h-64 w-full">
-                          <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={playerComparisonData}>
-                              <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis
-                                dataKey="stat"
-                                tick={{ fontSize: 12 }}
-                                angle={-45}
-                                textAnchor="end"
-                                height={80}
-                              />
-                              <YAxis tick={{ fontSize: 12 }} />
-                              <Tooltip
-                                contentStyle={{
-                                  backgroundColor: "#f8f9fa",
-                                  border: "1px solid #e9ecef",
-                                  borderRadius: "6px",
-                                }}
-                              />
-                              <Legend />
-                              <Line
-                                type="monotone"
-                                dataKey={selectedPlayer.name}
-                                stroke="#059669"
-                                strokeWidth={3}
-                                dot={{ fill: "#059669", strokeWidth: 2, r: 4 }}
-                                activeDot={{
-                                  r: 6,
-                                  stroke: "#059669",
-                                  strokeWidth: 2,
-                                }}
-                              />
-                              <Line
-                                type="monotone"
-                                dataKey={comparisonPlayer.name}
-                                stroke="#2563eb"
-                                strokeWidth={3}
-                                dot={{ fill: "#2563eb", strokeWidth: 2, r: 4 }}
-                                activeDot={{
-                                  r: 6,
-                                  stroke: "#2563eb",
-                                  strokeWidth: 2,
-                                }}
-                              />
-                            </LineChart>
-                          </ResponsiveContainer>
-                        </div>
-                        <div className="text-xs text-gray-600 text-center">
-                          Performance metrics comparison between selected
-                          players
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <PlayerComparison
+                  selectedPlayer={selectedPlayer}
+                  comparisonPlayer={comparisonPlayer}
+                  setComparisonPlayer={setComparisonPlayer}
+                  mockPlayers={mockPlayers}
+                  playerComparisonData={playerComparisonData}
+                />
               </div>
             </div>
           </TabsContent>
