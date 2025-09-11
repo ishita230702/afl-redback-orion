@@ -12,6 +12,7 @@ import type { QueueItem } from "@/types/dashboard";
 import { useProcessingQueue } from "@/hooks/use-processing-queue";
 import { useVideoAnalysis } from "@/hooks/use-video-analysis";
 import { useNavigate } from "react-router-dom";
+import { mockPlayers, matchEvents, getStaticAFLCrowdZones, teamMatchesData } from "@/data/mock";
 import { downloadText, downloadFile } from "@/lib/download";
 import { formatTimeAgo, formatETA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
