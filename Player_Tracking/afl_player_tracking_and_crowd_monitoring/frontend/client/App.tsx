@@ -11,6 +11,7 @@ import PlayerPerformance from "./pages/PlayerPerformance";
 import CrowdMonitor from "./pages/CrowdMonitor";
 import Analytics from "./pages/Analytics";
 import Reports from "./pages/Reports";
+import Settings from "./pages/Settings";
 import ApiDiagnostics from "./pages/ApiDiagnostics";
 import ErrorDemo from "./pages/ErrorDemo";
 import NotFound from "./pages/NotFound";
@@ -83,6 +84,7 @@ export default function App() {
               <Route path="/crowd-monitor" element={<CrowdMonitor />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/reports" element={<Reports />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/team-match-performance" element={<TeamMatchPerformance />} />
               <Route path="/api-diagnostics" element={<ApiDiagnostics />} />
               <Route path="/error-demo" element={<ErrorDemo />} />

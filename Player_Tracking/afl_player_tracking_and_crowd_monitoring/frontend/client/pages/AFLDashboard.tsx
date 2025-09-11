@@ -989,7 +989,7 @@ export default function AFLDashboard() {
                   Welcome, {userEmail}
                 </span>
               )}
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => navigate("/settings") }>
                 <Settings className="w-4 h-4 mr-2" />
                 Settings
               </Button>
