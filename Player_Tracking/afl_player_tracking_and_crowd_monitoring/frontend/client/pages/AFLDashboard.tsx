@@ -359,6 +359,10 @@ export default function AFLDashboard() {
   };
 
   const handleDownloadTeamPDF = () => {
+    if (teamA === 'all' && teamB === 'all') {
+      alert('Select Team A or Team B to generate a team report.');
+      return;
+    }
     const html = buildTeamPerformanceReportHTML({
       teamA,
       teamB,
@@ -2547,10 +2551,14 @@ export default function AFLDashboard() {
                     Primary: <span className="font-medium">{selectedPlayer.name}</span><br/>
                     Comparison: <span className="font-medium">{comparisonPlayer.name}</span>
                   </div>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" className="rounded" checked={includeComparison} onChange={(e)=>setIncludeComparison(e.target.checked)} />
-                    Include comparison
-                  </label>
+                  <div className="text-xs text-gray-500">Source: Player Performance</div>
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium">Report type</div>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" className="rounded" checked={includeComparison} onChange={(e)=>setIncludeComparison(e.target.checked)} />
+                      Include comparison (player vs player)
+                    </label>
+                  </div>
                   <Button onClick={handleDownloadPlayerPDF} className="w-full">
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>
@@ -2569,15 +2577,47 @@ export default function AFLDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="text-sm text-gray-600">
-                    Teams: <span className="font-medium">{teamA}</span> vs <span className="font-medium">{teamB}</span>
+                    Teams: <span className="font-medium">{teamA === 'all' ? 'Select team A' : teamA}</span> vs <span className="font-medium">{teamB === 'all' ? 'Select team B' : teamB}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">Source: Team Match</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-sm font-medium">Team A</label>
+                      <Select value={teamA} onValueChange={setTeamA}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teamTeams.filter((t)=>t !== 'all').map((t)=> (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium">Team B</label>
+                      <Select value={teamB} onValueChange={setTeamB}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teamTeams.filter((t)=>t !== 'all').map((t)=> (
+                            <SelectItem key={t} value={t}>{t}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <label className="flex items-center gap-2 text-sm">
                     <input type="checkbox" className="rounded" checked={includeMatches} onChange={(e)=>setIncludeMatches(e.target.checked)} />
                     Include matches list
                   </label>
-                  <Button onClick={handleDownloadTeamPDF} className="w-full">
+                  <Button onClick={handleDownloadTeamPDF} className="w-full" disabled={teamA==='all' && teamB==='all'}>
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>
+                  {(teamA==='all' && teamB==='all') && (
+                    <div className="text-xs text-red-600">Pick at least one team to generate a focused report.</div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -2595,6 +2635,7 @@ export default function AFLDashboard() {
                   <div className="text-sm text-gray-600">
                     Sections: <span className="font-medium">{crowdZones.length}</span> • Total attendance: <span className="font-medium">{crowdZones.reduce((s,z)=>s+z.current,0).toLocaleString()}</span>
                   </div>
+                  <div className="text-xs text-gray-500">Source: Crowd Monitor</div>
                   <label className="flex items-center gap-2 text-sm">
                     <input type="checkbox" className="rounded" checked={includeTimelineChart} onChange={(e)=>setIncludeTimelineChart(e.target.checked)} />
                     Include timeline chart
