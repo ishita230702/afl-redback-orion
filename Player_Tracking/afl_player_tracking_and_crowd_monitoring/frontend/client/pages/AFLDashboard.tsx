@@ -97,9 +97,6 @@ import {
   Flag,
 } from "lucide-react";
 
-import { mockPlayers, matchEvents } from "@/lib/mock-data";
-
-
 
 
 export default function AFLDashboard() {
