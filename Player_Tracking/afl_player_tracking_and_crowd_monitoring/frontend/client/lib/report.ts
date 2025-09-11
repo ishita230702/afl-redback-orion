@@ -219,59 +219,111 @@ export const generateDashboardInsights = () => {
 };
 
 export const buildPlayerPerformanceReportHTML = (args: any) => {
-  const { selectedPlayer, comparisonPlayer, comparisonData } = args || {};
+  const { mode = 'individual', selectedPlayer, comparisonPlayer, comparisonData } = args || {};
   const now = new Date().toLocaleString();
+  const isComparison = mode === 'comparison' && comparisonPlayer;
+  const header = `
+    <div class="metric">
+      <strong>Generated:</strong> ${now}<br>
+      <strong>${isComparison ? 'Primary Player' : 'Player'}:</strong> ${selectedPlayer?.name || 'N/A'}
+      ${isComparison ? `<br><strong>Comparison:</strong> ${comparisonPlayer?.name || 'N/A'}` : ''}
+    </div>`;
+
+  const snapshot = `
+    <div class="section">
+      <h2>Snapshot</h2>
+      <div class="player-grid">
+        ${[selectedPlayer, isComparison ? comparisonPlayer : null]
+          .filter(Boolean)
+          .map((p: any) => `
+            <div class="player-card">
+              <h3 style="margin:0 0 8px 0;color:#059669;">${p.name}</h3>
+              <div class="player-team">${p.team} - ${p.position}</div>
+              <div><strong>Kicks:</strong> ${p.kicks}</div>
+              <div><strong>Handballs:</strong> ${p.handballs}</div>
+              <div><strong>Marks:</strong> ${p.marks}</div>
+              <div><strong>Tackles:</strong> ${p.tackles}</div>
+              <div><strong>Goals:</strong> ${p.goals}</div>
+              <div><strong>Efficiency:</strong> ${p.efficiency}%</div>
+            </div>
+          `)
+          .join("")}
+      </div>
+    </div>`;
+
+  const comparisonTable = isComparison && comparisonData ? `
+    <div class="section">
+      <h2>Comparison Table</h2>
+      <div class="metric">
+        ${comparisonData
+          .map(
+            (row: any) => `
+            <div style="display:flex;gap:12px;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding:6px 0;">
+              <div style="width:160px"><strong>${row.stat}</strong></div>
+              <div>${selectedPlayer?.name}: ${row[selectedPlayer?.name]}</div>
+              <div>${comparisonPlayer?.name}: ${row[comparisonPlayer?.name]}</div>
+            </div>`,
+          )
+          .join("")}
+      </div>
+    </div>` : '';
+
   return `
     <div class="section">
       <h1>Player Performance Report</h1>
-      <div class="metric">
-        <strong>Generated:</strong> ${now}<br>
-        <strong>Primary Player:</strong> ${selectedPlayer?.name || "N/A"}<br>
-        <strong>Comparison:</strong> ${comparisonPlayer?.name || "N/A"}
-      </div>
-      <div class="section">
-        <h2>Snapshot</h2>
-        <div class="player-grid">
-          ${[selectedPlayer, comparisonPlayer]
-            .filter(Boolean)
-            .map((p: any) => `
-              <div class="player-card">
-                <h3 style="margin:0 0 8px 0;color:#059669;">${p.name}</h3>
-                <div class="player-team">${p.team} - ${p.position}</div>
-                <div><strong>Kicks:</strong> ${p.kicks}</div>
-                <div><strong>Handballs:</strong> ${p.handballs}</div>
-                <div><strong>Marks:</strong> ${p.marks}</div>
-                <div><strong>Tackles:</strong> ${p.tackles}</div>
-                <div><strong>Goals:</strong> ${p.goals}</div>
-                <div><strong>Efficiency:</strong> ${p.efficiency}%</div>
-              </div>
-            `)
-            .join("")}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>Comparison Table</h2>
-        <div class="metric">
-          ${comparisonData
-            ?.map(
-              (row: any) => `
-              <div style="display:flex;gap:12px;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding:6px 0;">
-                <div style="width:160px"><strong>${row.stat}</strong></div>
-                <div>${selectedPlayer?.name}: ${row[selectedPlayer?.name]}</div>
-                <div>${comparisonPlayer?.name}: ${row[comparisonPlayer?.name]}</div>
-              </div>`,
-            )
-            .join("") || "No comparison data"}
-        </div>
-      </div>
-    `;
+      ${header}
+    </div>
+    ${snapshot}
+    ${comparisonTable}
+  `;
 };
 
 export const buildTeamPerformanceReportHTML = (args: any) => {
-  const { teamA, teamB, teamCompare, summary, matches } = args || {};
+  const { mode = 'comparison', teamA, teamB, singleTeam, teamCompare, summary, matches } = args || {};
   const now = new Date().toLocaleString();
   const a = teamCompare?.a || {}; const b = teamCompare?.b || {};
+
+  if (mode === 'individual' && singleTeam) {
+    const totals = singleTeam === teamA ? a : singleTeam === teamB ? b : a;
+    return `
+      <div class="section">
+        <h1>Team Performance Report</h1>
+        <div class="metric">
+          <strong>Generated:</strong> ${now}<br>
+          <strong>Team:</strong> ${singleTeam}
+        </div>
+      </div>
+      <div class="section">
+        <h2>Summary</h2>
+        <div class="metric">
+          Matches: ${summary?.games || 0} • Goals: ${summary?.goals || 0} • Disposals: ${(summary?.disposals || 0).toLocaleString()} • Inside 50s: ${summary?.inside50 || 0}
+        </div>
+      </div>
+      <div class="section">
+        <h2>Totals</h2>
+        <div class="metric">
+          <div><strong>Goals:</strong> ${totals.goals || 0}</div>
+          <div><strong>Disposals:</strong> ${(totals.disposals || 0).toLocaleString()}</div>
+          <div><strong>Marks:</strong> ${totals.marks || 0}</div>
+          <div><strong>Tackles:</strong> ${totals.tackles || 0}</div>
+          <div><strong>Efficiency:</strong> ${teamCompare?.aEff || teamCompare?.bEff || 0}%</div>
+        </div>
+      </div>
+      <div class="section">
+        <h2>Matches</h2>
+        ${matches
+          ?.map(
+            (m: any) => `
+            <div class="metric">
+              <strong>${m.teams.home} vs ${m.teams.away}</strong> • ${m.venue} • ${new Date(m.date).toLocaleDateString()}<br>
+              Score: ${m.stats.home.goals * 6 + m.stats.home.behinds} - ${m.stats.away.goals * 6 + m.stats.away.behinds}
+            </div>`,
+          )
+          .join("") || "No matches"}
+      </div>
+    `;
+  }
+
   return `
     <div class="section">
       <h1>Team Performance Report</h1>
