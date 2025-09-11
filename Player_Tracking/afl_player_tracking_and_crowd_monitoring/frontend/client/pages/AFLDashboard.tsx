@@ -1880,59 +1880,14 @@ Export ID: ${Date.now()}-${Math.random().toString(36).substr(2, 9)}
             </div>
 
             {/* Compare Teams */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="w-5 h-5" />
-                  Compare Teams
-                </CardTitle>
-                <CardDescription>Select two teams to compare totals across listed matches</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <Select value={teamA} onValueChange={setTeamA}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Team A" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {teamTeams.filter(t=>t!=="all").map((t) => (
-                          <SelectItem key={t} value={t}>{t}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Select value={teamB} onValueChange={setTeamB}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Team B" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {teamTeams.filter(t=>t!=="all").map((t) => (
-                          <SelectItem key={t} value={t}>{t}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center">
-                    <Badge variant="outline" className="w-full justify-center">
-                      {teamA !== "all" && teamB !== "all" && teamA !== teamB ? "Ready" : "Select two different teams"}
-                    </Badge>
-                  </div>
-                </div>
-
-                {teamA !== "all" && teamB !== "all" && teamA !== teamB && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <TeamCompareBar label="Goals" aLabel={teamA} aValue={teamCompare.a.goals} bLabel={teamB} bValue={teamCompare.b.goals} />
-                    <TeamCompareBar label="Disposals" aLabel={teamA} aValue={teamCompare.a.disposals} bLabel={teamB} bValue={teamCompare.b.disposals} />
-                    <TeamCompareBar label="Marks" aLabel={teamA} aValue={teamCompare.a.marks} bLabel={teamB} bValue={teamCompare.b.marks} />
-                    <TeamCompareBar label="Tackles" aLabel={teamA} aValue={teamCompare.a.tackles} bLabel={teamB} bValue={teamCompare.b.tackles} />
-                    <TeamCompareBar label="Inside 50" aLabel={teamA} aValue={teamCompare.a.inside50} bLabel={teamB} bValue={teamCompare.b.inside50} />
-                    <TeamCompareBar label="Avg Efficiency %" aLabel={teamA} aValue={teamCompare.aEff} bLabel={teamB} bValue={teamCompare.bEff} />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <TeamMatchCompare
+              teamA={teamA}
+              setTeamA={setTeamA}
+              teamB={teamB}
+              setTeamB={setTeamB}
+              teamTeams={teamTeams}
+              teamCompare={teamCompare}
+            />
 
             {/* Matches list */}
             <div className="grid grid-cols-1 gap-4">
@@ -2209,7 +2164,7 @@ Export ID: ${Date.now()}-${Math.random().toString(36).substr(2, 9)}
                                   {isExpanded && (
                                     <div className="mt-3 flex gap-2 opacity-0 animate-[fadeIn_0.5s_ease-in-out_0.3s_forwards]">
                                       <div className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-white text-xs">
-                                        🏆 Season MVP
+                                        �� Season MVP
                                       </div>
                                       <div className="px-2 py-1 bg-white/20 backdrop-blur-sm rounded text-white text-xs">
                                         ��� Top Performer
