@@ -464,10 +464,7 @@ export default function AFLDashboard() {
       } else if (format === "pdf") {
         // Generate PDF from backend data
         const htmlContent = convertBackendDataToHTML(backendData);
-        generateDashboardPDF(
-          htmlContent,
-          `${item.name.replace(/\.[^/.]+$/, "")}_Analysis`,
-        );
+        generateDashboardPDF(htmlContent);
       } else {
         // Generate TXT from backend data
         const textContent = convertBackendDataToText(backendData);
