@@ -5,6 +5,7 @@ import FeatureCards from "@/components/auth/FeatureCards";
 import DemoAccessCard from "@/components/auth/DemoAccessCard";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
+import ForgotPasswordDialog from "@/components/auth/ForgotPasswordDialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,38 +14,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Activity,
-  Users,
-  BarChart3,
-  Video,
-  Shield,
-  Eye,
-  EyeOff,
-  Smartphone,
-  Monitor,
-  User,
-  Mail,
-  Lock,
-  Building,
-  ArrowLeft,
-  CheckCircle,
-} from "lucide-react";
+import { Activity, Users, BarChart3, Video, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { loginWithEmail, signupWithEmail } from "@/lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -64,69 +39,22 @@ export default function Login() {
     role: "",
     agreeTerms: false,
   });
-  const [resetForm, setResetForm] = useState({
-    email: "",
-    resetCode: "",
-    newPassword: "",
-    confirmNewPassword: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [resetStep, setResetStep] = useState(1); // 1: email, 2: code, 3: new password, 4: success
-  const [resetMessage, setResetMessage] = useState("");
-
-  // Valid demo credentials for authentication
-  const validCredentials = [
-    { email: "demo@aflanalytics.com", password: "demo123" },
-    { email: "admin@aflanalytics.com", password: "admin123" },
-    { email: "coach@aflanalytics.com", password: "coach123" },
-    { email: "analyst@aflanalytics.com", password: "analyst123" },
-  ];
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
-
-    // Simulate login API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Check if both email and password are provided
-    if (!loginForm.email || !loginForm.password) {
-      setError("Please enter both email and password");
-      setIsLoading(false);
-      return;
-    }
-
-    // Get stored user credentials from localStorage
-    const storedUsers = JSON.parse(
-      localStorage.getItem("registeredUsers") || "[]",
-    );
-
-    // Combine demo credentials with registered user credentials
-    const allValidCredentials = [...validCredentials, ...storedUsers];
-
-    // Validate credentials against all valid credentials
-    const isValidCredential = allValidCredentials.some(
-      (cred) =>
-        cred.email.toLowerCase() === loginForm.email.toLowerCase() &&
-        cred.password === loginForm.password,
-    );
-
-    if (isValidCredential) {
-      // Store authentication state in localStorage
+    const res = await loginWithEmail({ email: loginForm.email, password: loginForm.password });
+    if (res.success) {
       localStorage.setItem("isAuthenticated", "true");
       localStorage.setItem("userEmail", loginForm.email);
-
-      // Successful login - redirect to dashboard
       navigate("/afl-dashboard");
     } else {
-      setError(
-        "Invalid email or password. Try demo@aflanalytics.com / demo123 or use your signup credentials",
-      );
+      setError(res.message);
     }
-
     setIsLoading(false);
   };
 
@@ -135,87 +63,44 @@ export default function Login() {
     setIsLoading(true);
     setError("");
 
-    // Validate all required fields
-    if (
-      !signupForm.firstName ||
-      !signupForm.lastName ||
-      !signupForm.email ||
-      !signupForm.password ||
-      !signupForm.organization
-    ) {
-      setError("Please fill all required fields");
-      setIsLoading(false);
-      return;
-    }
-
     if (signupForm.password !== signupForm.confirmPassword) {
       setError("Passwords do not match");
       setIsLoading(false);
       return;
     }
-
     if (!signupForm.agreeTerms) {
       setError("Please agree to the terms of service");
       setIsLoading(false);
       return;
     }
 
-    // Check if user already exists
-    const existingUsers = JSON.parse(
-      localStorage.getItem("registeredUsers") || "[]",
-    );
-    const userExists = existingUsers.some(
-      (user: any) =>
-        user.email.toLowerCase() === signupForm.email.toLowerCase(),
-    );
-
-    if (userExists) {
-      setError(
-        "An account with this email already exists. Please login instead.",
-      );
-      setIsLoading(false);
-      return;
-    }
-
-    // Simulate signup API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Create new user object
-    const newUser = {
-      email: signupForm.email,
-      password: signupForm.password,
+    const res = await signupWithEmail({
       firstName: signupForm.firstName,
       lastName: signupForm.lastName,
+      email: signupForm.email,
+      password: signupForm.password,
       organization: signupForm.organization,
       role: signupForm.role,
-    };
-
-    // Add new user to registered users list
-    const updatedUsers = [...existingUsers, newUser];
-    localStorage.setItem("registeredUsers", JSON.stringify(updatedUsers));
-
-    // Store authentication state for new user
-    localStorage.setItem("isAuthenticated", "true");
-    localStorage.setItem("userEmail", signupForm.email);
-    localStorage.setItem(
-      "userName",
-      `${signupForm.firstName} ${signupForm.lastName}`,
-    );
-
-    // Clear the signup form
-    setSignupForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      organization: "",
-      role: "",
-      agreeTerms: false,
     });
-
-    // Successful signup - redirect to dashboard
-    navigate("/afl-dashboard");
+    if (res.success) {
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", signupForm.email);
+      localStorage.setItem("userName", `${signupForm.firstName} ${signupForm.lastName}`);
+      setSignupForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        organization: "",
+        role: "",
+        agreeTerms: false,
+      });
+      navigate("/afl-dashboard");
+    } else {
+      setError(res.message);
+    }
+    setIsLoading(false);
   };
 
   const demoLogin = () => {
@@ -458,192 +343,7 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Forgot Password Modal */}
-      <Dialog open={isResetModalOpen} onOpenChange={setIsResetModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {resetStep > 1 && resetStep < 4 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setResetStep(Math.max(1, resetStep - 1))}
-                  className="p-0 h-6 w-6"
-                >
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              )}
-              {resetStep === 1 && "Reset Password"}
-              {resetStep === 2 && "Enter Verification Code"}
-              {resetStep === 3 && "Create New Password"}
-              {resetStep === 4 && "Password Reset Complete"}
-            </DialogTitle>
-            <DialogDescription>
-              {resetStep === 1 && "Enter your email to receive a reset link"}
-              {resetStep === 2 && "Check your email for a verification code"}
-              {resetStep === 3 && "Enter your new password"}
-              {resetStep === 4 && "Your password has been successfully reset"}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            {resetMessage && resetStep === 2 && (
-              <Alert>
-                <Mail className="h-4 w-4" />
-                <AlertDescription>{resetMessage}</AlertDescription>
-              </Alert>
-            )}
-
-            {/* Step 1: Email Input */}
-            {resetStep === 1 && (
-              <form onSubmit={handleForgotPassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="resetEmail">Email Address</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="resetEmail"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={resetForm.email}
-                      onChange={(e) =>
-                        setResetForm({ ...resetForm, email: e.target.value })
-                      }
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-orange-600" disabled={isLoading}>
-                  {isLoading ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Sending Reset Link...
-                    </div>
-                  ) : (
-                    "Send Reset Link"
-                  )}
-                </Button>
-              </form>
-            )}
-
-            {/* Step 2: Verification Code */}
-            {resetStep === 2 && (
-              <form onSubmit={handleVerifyResetCode} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="resetCode">Verification Code</Label>
-                  <Input
-                    id="resetCode"
-                    type="text"
-                    placeholder="Enter 6-digit code"
-                    value={resetForm.resetCode}
-                    onChange={(e) =>
-                      setResetForm({ ...resetForm, resetCode: e.target.value })
-                    }
-                    maxLength={6}
-                    required
-                  />
-                  <p className="text-xs text-gray-600">
-                    For demo purposes, use code: <strong>123456</strong>
-                  </p>
-                </div>
-                <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-orange-600" disabled={isLoading}>
-                  {isLoading ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Verifying...
-                    </div>
-                  ) : (
-                    "Verify Code"
-                  )}
-                </Button>
-              </form>
-            )}
-
-            {/* Step 3: New Password */}
-            {resetStep === 3 && (
-              <form onSubmit={handleResetPassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="newPassword">New Password</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      placeholder="Enter new password"
-                      value={resetForm.newPassword}
-                      onChange={(e) =>
-                        setResetForm({
-                          ...resetForm,
-                          newPassword: e.target.value,
-                        })
-                      }
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmNewPassword">
-                    Confirm New Password
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="confirmNewPassword"
-                      type="password"
-                      placeholder="Confirm new password"
-                      value={resetForm.confirmNewPassword}
-                      onChange={(e) =>
-                        setResetForm({
-                          ...resetForm,
-                          confirmNewPassword: e.target.value,
-                        })
-                      }
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-                <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-orange-600" disabled={isLoading}>
-                  {isLoading ? (
-                    <div className="flex items-center">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                      Resetting Password...
-                    </div>
-                  ) : (
-                    "Reset Password"
-                  )}
-                </Button>
-              </form>
-            )}
-
-            {/* Step 4: Success */}
-            {resetStep === 4 && (
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-8 h-8 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-green-900">Success!</h3>
-                  <p className="text-sm text-green-700">
-                    Your password has been reset successfully.
-                  </p>
-                </div>
-                <Button onClick={closeResetModal} className="w-full bg-gradient-to-r from-purple-600 to-orange-600">
-                  Continue to Sign In
-                </Button>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ForgotPasswordDialog open={isResetModalOpen} onOpenChange={setIsResetModalOpen} />
     </div>
   );
 }
