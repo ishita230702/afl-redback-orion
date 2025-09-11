@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { mockPlayers, matchEvents, getStaticAFLCrowdZones, teamMatchesData } from "@/data/mock";
 import { downloadText, downloadFile } from "@/lib/download";
 import { formatTimeAgo, formatETA } from "@/lib/format";
+import { convertBackendDataToText, convertBackendDataToHTML, generateDashboardPDF } from "@/lib/report";
 import { Button } from "@/components/ui/button";
 import {
   Card,
