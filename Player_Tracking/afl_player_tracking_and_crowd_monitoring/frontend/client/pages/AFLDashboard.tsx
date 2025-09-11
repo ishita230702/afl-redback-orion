@@ -675,53 +675,6 @@ export default function AFLDashboard() {
     };
   };
 
-  // PDF generation for dashboard reports
-  const generateDashboardPDF = (content: string, fileName: string) => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      alert("Please allow popups to generate PDF reports");
-      return;
-    }
-
-    const htmlContent = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>AFL Analytics Dashboard Report</title>
-          <style>
-            body { font-family: 'Segoe UI', sans-serif; margin: 40px; line-height: 1.6; color: #333; }
-            .header { text-align: center; border-bottom: 3px solid #059669; padding-bottom: 20px; margin-bottom: 30px; }
-            .logo { color: #059669; font-size: 28px; font-weight: bold; margin-bottom: 5px; }
-            .subtitle { color: #666; font-size: 14px; }
-            h1 { color: #059669; font-size: 24px; margin: 30px 0 15px 0; }
-            h2 { color: #2563eb; font-size: 18px; margin: 25px 0 10px 0; border-bottom: 1px solid #e5e7eb; padding-bottom: 5px; }
-            .metric { background: #f0fdf4; padding: 10px; margin: 8px 0; border-left: 4px solid #059669; }
-            .section { margin-bottom: 25px; }
-            .player-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0; }
-            .player-card { background: #f9fafb; padding: 12px; border-radius: 6px; border: 1px solid #e5e7eb; }
-            .crowd-item { background: #ecfdf5; padding: 8px; margin: 4px 0; border-radius: 4px; }
-            @media print { body { margin: 20px; } .no-print { display: none; } }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <div class="logo">AFL Analytics Dashboard</div>
-            <div class="subtitle">Professional Sports Analytics Platform</div>
-          </div>
-          <div class="no-print" style="text-align: center; margin-bottom: 20px;">
-            <button onclick="window.print()" style="background: #059669; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Generate PDF</button>
-            <button onclick="window.close()" style="background: #6b7280; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Close</button>
-          </div>
-          ${content}
-        </body>
-      </html>
-    `;
-
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-    setTimeout(() => printWindow.print(), 500);
-  };
 
   // Generate detailed AFL video analysis insights
   const generateDashboardInsights = () => {
