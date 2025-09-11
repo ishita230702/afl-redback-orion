@@ -197,9 +197,6 @@ export default function Login() {
     window.location.href = "/api/auth/google";
   };
 
-  const handleAppleAuth = () => {
-    window.location.href = "/api/auth/apple";
-  };
 
   // Handle OAuth callback from URL parameters
   useEffect(() => {
@@ -321,7 +318,7 @@ export default function Login() {
                       )}
 
                       {/* OAuth Buttons */}
-                      <AuthProviderButtons mode="login" onGoogle={handleGoogleAuth} onApple={handleAppleAuth} />
+                      <AuthProviderButtons mode="login" onGoogle={handleGoogleAuth} />
 
                       <LoginForm
                         values={loginForm}
@@ -342,7 +339,7 @@ export default function Login() {
                       )}
 
                       {/* OAuth Buttons */}
-                      <AuthProviderButtons mode="signup" onGoogle={handleGoogleAuth} onApple={handleAppleAuth} />
+                      <AuthProviderButtons mode="signup" onGoogle={handleGoogleAuth} />
 
                       <SignupForm
                         values={signupForm}
