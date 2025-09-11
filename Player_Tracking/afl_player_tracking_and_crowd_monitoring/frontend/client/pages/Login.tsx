@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import HeaderBrand from "@/components/auth/HeaderBrand";
 import AuthProviderButtons from "@/components/auth/AuthProviderButtons";
+import FeatureCards from "@/components/auth/FeatureCards";
+import DemoAccessCard from "@/components/auth/DemoAccessCard";
+import LoginForm from "@/components/auth/LoginForm";
+import SignupForm from "@/components/auth/SignupForm";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -387,49 +391,9 @@ export default function Login() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <div
-                      key={index}
-                      className="p-4 bg-white rounded-lg border shadow-sm"
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-purple-100 to-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <Icon className="w-4 h-4 text-purple-600" />
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-gray-900">
-                            {feature.title}
-                          </h4>
-                          <p className="text-sm text-gray-600">
-                            {feature.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+              <FeatureCards features={features} />
 
-              <div className="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                <div className="flex items-center space-x-2 mb-2">
-                  <User className="w-4 h-4 text-orange-600" />
-                  <span className="font-medium text-orange-900">Demo Access</span>
-                </div>
-                <p className="text-sm text-orange-700 mb-3">
-                  Try the platform with demo credentials to explore all features
-                </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={demoLogin}
-                  className="text-orange-600 border-orange-300 hover:bg-orange-100"
-                >
-                  Load Demo Credentials
-                </Button>
-              </div>
+              <DemoAccessCard onLoadDemo={demoLogin} />
             </div>
 
             {/* Right side - Login/Signup Form */}
@@ -458,100 +422,15 @@ export default function Login() {
                       {/* OAuth Buttons */}
                       <AuthProviderButtons mode="login" onGoogle={handleGoogleAuth} onApple={handleAppleAuth} />
 
-                      <form onSubmit={handleLogin} className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email Address</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="email"
-                              type="email"
-                              placeholder="your@email.com"
-                              value={loginForm.email}
-                              onChange={(e) =>
-                                setLoginForm({
-                                  ...loginForm,
-                                  email: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="password">Password</Label>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="password"
-                              type={showPassword ? "text" : "password"}
-                              placeholder="Enter your password"
-                              value={loginForm.password}
-                              onChange={(e) =>
-                                setLoginForm({
-                                  ...loginForm,
-                                  password: e.target.value,
-                                })
-                              }
-                              className="pl-10 pr-10"
-                              required
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                            >
-                              {showPassword ? (
-                                <EyeOff className="h-4 w-4" />
-                              ) : (
-                                <Eye className="h-4 w-4" />
-                              )}
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id="remember"
-                              checked={loginForm.rememberMe}
-                              onCheckedChange={(checked) =>
-                                setLoginForm({
-                                  ...loginForm,
-                                  rememberMe: checked as boolean,
-                                })
-                              }
-                            />
-                            <Label htmlFor="remember" className="text-sm">
-                              Remember me
-                            </Label>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setIsResetModalOpen(true)}
-                            className="text-sm text-orange-600 hover:underline"
-                          >
-                            Forgot password?
-                          </button>
-                        </div>
-
-                        <Button
-                          type="submit"
-                          className="w-full bg-gradient-to-r from-purple-600 to-orange-600"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <div className="flex items-center">
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                              Signing In...
-                            </div>
-                          ) : (
-                            "Sign In"
-                          )}
-                        </Button>
-                      </form>
+                      <LoginForm
+                        values={loginForm}
+                        showPassword={showPassword}
+                        onToggleShowPassword={() => setShowPassword(!showPassword)}
+                        onChange={(u) => setLoginForm({ ...loginForm, ...u })}
+                        onSubmit={handleLogin}
+                        isLoading={isLoading}
+                        onForgotPassword={() => setIsResetModalOpen(true)}
+                      />
                     </TabsContent>
 
                     <TabsContent value="signup" className="space-y-4">
@@ -564,170 +443,12 @@ export default function Login() {
                       {/* OAuth Buttons */}
                       <AuthProviderButtons mode="signup" onGoogle={handleGoogleAuth} onApple={handleAppleAuth} />
 
-                      <form onSubmit={handleSignup} className="space-y-4">
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-2">
-                            <Label htmlFor="firstName">First Name</Label>
-                            <Input
-                              id="firstName"
-                              placeholder="John"
-                              value={signupForm.firstName}
-                              onChange={(e) =>
-                                setSignupForm({
-                                  ...signupForm,
-                                  firstName: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="lastName">Last Name</Label>
-                            <Input
-                              id="lastName"
-                              placeholder="Doe"
-                              value={signupForm.lastName}
-                              onChange={(e) =>
-                                setSignupForm({
-                                  ...signupForm,
-                                  lastName: e.target.value,
-                                })
-                              }
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="signupEmail">Email Address</Label>
-                          <div className="relative">
-                            <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="signupEmail"
-                              type="email"
-                              placeholder="your@email.com"
-                              value={signupForm.email}
-                              onChange={(e) =>
-                                setSignupForm({
-                                  ...signupForm,
-                                  email: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="organization">Organization</Label>
-                          <div className="relative">
-                            <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="organization"
-                              placeholder="AFL Team or Organization"
-                              value={signupForm.organization}
-                              onChange={(e) =>
-                                setSignupForm({
-                                  ...signupForm,
-                                  organization: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="signupPassword">Password</Label>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="signupPassword"
-                              type="password"
-                              placeholder="Create a strong password"
-                              value={signupForm.password}
-                              onChange={(e) =>
-                                setSignupForm({
-                                  ...signupForm,
-                                  password: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="confirmPassword">
-                            Confirm Password
-                          </Label>
-                          <div className="relative">
-                            <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                            <Input
-                              id="confirmPassword"
-                              type="password"
-                              placeholder="Confirm your password"
-                              value={signupForm.confirmPassword}
-                              onChange={(e) =>
-                                setSignupForm({
-                                  ...signupForm,
-                                  confirmPassword: e.target.value,
-                                })
-                              }
-                              className="pl-10"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="terms"
-                            checked={signupForm.agreeTerms}
-                            onCheckedChange={(checked) =>
-                              setSignupForm({
-                                ...signupForm,
-                                agreeTerms: checked as boolean,
-                              })
-                            }
-                            required
-                          />
-                          <Label htmlFor="terms" className="text-sm">
-                            I agree to the{" "}
-                            <button
-                              type="button"
-                              className="text-orange-600 hover:underline"
-                            >
-                              Terms of Service
-                            </button>{" "}
-                            and{" "}
-                            <button
-                              type="button"
-                              className="text-orange-600 hover:underline"
-                            >
-                              Privacy Policy
-                            </button>
-                          </Label>
-                        </div>
-
-                        <Button
-                          type="submit"
-                          className="w-full bg-gradient-to-r from-purple-600 to-orange-600"
-                          disabled={isLoading}
-                        >
-                          {isLoading ? (
-                            <div className="flex items-center">
-                              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                              Creating Account...
-                            </div>
-                          ) : (
-                            "Create Account"
-                          )}
-                        </Button>
-                      </form>
+                      <SignupForm
+                        values={signupForm}
+                        onChange={(u) => setSignupForm({ ...signupForm, ...u })}
+                        onSubmit={handleSignup}
+                        isLoading={isLoading}
+                      />
                     </TabsContent>
                   </Tabs>
                 </CardContent>

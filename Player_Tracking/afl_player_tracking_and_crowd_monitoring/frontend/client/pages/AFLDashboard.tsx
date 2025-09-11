@@ -5,6 +5,7 @@ import ProcessingQueueList from "@/components/dashboard/ProcessingQueueList";
 import type { QueueItem } from "@/types/dashboard";
 import { useNavigate } from "react-router-dom";
 import { downloadText, downloadFile } from "@/lib/download";
+import { formatTimeAgo, formatETA } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -478,32 +479,7 @@ export default function AFLDashboard() {
     setProcessingQueue((prev) => prev.filter((item) => item.id !== itemId));
   };
 
-  const formatTimeAgo = (timestamp: string) => {
-    const now = new Date();
-    const time = new Date(timestamp);
-    const diffMs = now.getTime() - time.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60) return `${diffMins} min ago`;
-    if (diffHours < 24)
-      return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    return time.toLocaleDateString();
-  };
-
-  const formatETA = (timestamp: string | null) => {
-    if (!timestamp) return "Unknown";
-    const now = new Date();
-    const eta = new Date(timestamp);
-    const diffMs = eta.getTime() - now.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-
-    if (diffMins < 0) return "Overdue";
-    if (diffMins < 60) return `${diffMins} min remaining`;
-    const diffHours = Math.floor(diffMins / 60);
-    return `${diffHours}h ${diffMins % 60}m remaining`;
-  };
 
   // Generate dynamic chart data for analysis results
   const generateAnalysisChartData = (item: any) => {
@@ -1595,7 +1571,7 @@ Analysis Type: ${
               : "Crowd Reactions"
     }
 
-════════════════════���══════════════════════════════����══════
+════════════════════�����══════════════════════════════����══════
 
 EXTRACTED VIDEO CLIPS WITH INSIGHTS
 ===================================
