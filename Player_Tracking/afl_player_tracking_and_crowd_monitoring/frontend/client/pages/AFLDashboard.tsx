@@ -4,7 +4,7 @@ import TeamCompareBar from "@/components/dashboard/TeamCompareBar";
 import ProcessingQueueList from "@/components/dashboard/ProcessingQueueList";
 import VideoUploadPanel from "@/components/dashboard/VideoUploadPanel";
 import AnalysisResultsPanel from "@/components/dashboard/AnalysisResultsPanel";
-import ReportsPanel from "@/components/dashboard/ReportsPanel";
+// ReportsPanel removed; replaced with Downloads tab
 import TeamMatchFilters from "@/components/dashboard/TeamMatchFilters";
 import TeamMatchCompare from "@/components/dashboard/TeamMatchCompare";
 import PlayerComparison from "@/components/dashboard/PlayerComparison";
@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { mockPlayers, matchEvents, getStaticAFLCrowdZones, teamMatchesData, generateTimelineFromStadiumData } from "@/data/mock";
 import { downloadText, downloadFile } from "@/lib/download";
 import { formatTimeAgo, formatETA } from "@/lib/format";
-import { convertBackendDataToText, convertBackendDataToHTML, generateDashboardPDF } from "@/lib/report";
+import { convertBackendDataToText, convertBackendDataToHTML, generateDashboardPDF, buildPlayerPerformanceReportHTML, buildTeamPerformanceReportHTML, buildCrowdMonitorReportHTML } from "@/lib/report";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -342,6 +342,33 @@ export default function AFLDashboard() {
     purple: "#7c3aed",
     pink: "#ec4899",
     teal: "#0d9488",
+  };
+
+  // PDF Downloads for dashboard sections
+  const handleDownloadPlayerPDF = () => {
+    const html = buildPlayerPerformanceReportHTML({
+      selectedPlayer,
+      comparisonPlayer,
+      comparisonData: playerComparisonData,
+    });
+    generateDashboardPDF(html);
+  };
+
+  const handleDownloadTeamPDF = () => {
+    const html = buildTeamPerformanceReportHTML({
+      teamA,
+      teamB,
+      teamCompare,
+      summary: teamSummary,
+      matches: teamFiltered,
+    });
+    generateDashboardPDF(html);
+  };
+
+  const handleDownloadCrowdPDF = () => {
+    const timeline = generateTimelineFromStadiumData(crowdZones);
+    const html = buildCrowdMonitorReportHTML({ zones: crowdZones, timeline });
+    generateDashboardPDF(html);
   };
 
   // View analysis results for a queue item
@@ -958,9 +985,9 @@ export default function AFLDashboard() {
               <Users className="w-4 h-4" />
               Crowd Monitor
             </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
+            <TabsTrigger value="downloads" className="flex items-center gap-2">
               <Download className="w-4 h-4" />
-              Reports
+              Downloads
             </TabsTrigger>
             <TabsTrigger value="team" className="flex items-center gap-2">
               <Target className="w-4 h-4" />
@@ -1561,7 +1588,7 @@ export default function AFLDashboard() {
                                           ⭐ Top Performer
                                         </div>
                                         <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded text-white text-sm">
-                                          💪 Best Midfielder
+                                          ��� Best Midfielder
                                         </div>
                                       </div>
                                     )}
@@ -2498,9 +2525,60 @@ export default function AFLDashboard() {
             </Tabs>
           </TabsContent>
 
-          {/* Analytics Report Download */}
-          <TabsContent value="reports" className="space-y-6">
-            <ReportsPanel />
+          {/* Downloads: Generate PDF reports for sections */}
+          <TabsContent value="downloads" className="space-y-6">
+            <div className="grid lg:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5" />
+                    Player Performance PDF
+                  </CardTitle>
+                  <CardDescription>
+                    Export current player stats and comparison as a styled PDF
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button onClick={handleDownloadPlayerPDF} className="w-full">
+                    <Download className="w-4 h-4 mr-2" /> Download PDF
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Team Performance PDF
+                  </CardTitle>
+                  <CardDescription>
+                    Export team summary, totals, and recent matches
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button onClick={handleDownloadTeamPDF} className="w-full">
+                    <Download className="w-4 h-4 mr-2" /> Download PDF
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Crowd Monitor PDF
+                  </CardTitle>
+                  <CardDescription>
+                    Export current zone densities and timeline summary
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button onClick={handleDownloadCrowdPDF} className="w-full">
+                    <Download className="w-4 h-4 mr-2" /> Download PDF
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Video Analytics Input */}
