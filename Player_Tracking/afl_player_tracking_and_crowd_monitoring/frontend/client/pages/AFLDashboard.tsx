@@ -98,36 +98,7 @@ import {
 
 // Mock data moved to @/data/mock
 
-const matchEvents = [
-  {
-    time: "1:32",
-    event: "GOAL",
-    player: "Charlie Curnow",
-    team: "Carlton",
-    description: "Beautiful mark and goal from 30m out",
-  },
-  {
-    time: "3:45",
-    event: "BEHIND",
-    player: "Taylor Walker",
-    team: "Adelaide",
-    description: "Shot from the boundary line",
-  },
-  {
-    time: "5:12",
-    event: "MARK",
-    player: "Jeremy McGovern",
-    team: "West Coast",
-    description: "Spectacular defensive mark",
-  },
-  {
-    time: "7:22",
-    event: "TACKLE",
-    player: "Clayton Oliver",
-    team: "Melbourne",
-    description: "Crucial tackle in defensive 50",
-  },
-];
+// matchEvents moved to @/data/mock
 
 // Generate timeline data based on current stadium zones
 const generateTimelineFromStadiumData = (crowdZones) => {
