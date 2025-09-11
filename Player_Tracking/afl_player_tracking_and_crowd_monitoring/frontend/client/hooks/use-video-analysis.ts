@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { QueueItem } from "@/types/dashboard";
 import { downloadText } from "@/lib/download";
+import { convertBackendDataToText, convertBackendDataToHTML, generateDashboardPDF, generateDashboardInsights } from "@/lib/report";
 
 export function useVideoAnalysis(setProcessingQueue: Dispatch<SetStateAction<QueueItem[]>>) {
   const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
