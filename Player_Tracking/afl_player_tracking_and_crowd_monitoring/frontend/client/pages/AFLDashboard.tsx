@@ -999,68 +999,6 @@ export default function AFLDashboard() {
   };
 
 
-  // Convert backend JSON to HTML for PDF
-  const convertBackendDataToHTML = (data: any) => {
-    return `
-      <div class="section">
-        <h1>AFL Video Analysis Report</h1>
-        <div class="metric">
-          <strong>Generated:</strong> ${new Date(data.timestamp).toLocaleString()}<br>
-          <strong>Analysis ID:</strong> ${data.analysisId}<br>
-          <strong>Video File:</strong> ${data.videoFile.name}<br>
-          <strong>Duration:</strong> ${data.videoFile.duration}<br>
-          <strong>Processing Time:</strong> ${data.processingTime} seconds
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>Player Performance Analysis</h2>
-        <div class="player-grid">
-          ${data.results.playerPerformance
-            .map(
-              (player: any) => `
-            <div class="player-card">
-              <h3 style="margin: 0 0 8px 0; color: #059669;">${player.name}</h3>
-              <div class="player-team">${player.team} - ${player.position}</div>
-              <div><strong>Max Speed:</strong> ${player.statistics.speed.max} ${player.statistics.speed.unit}</div>
-              <div><strong>Distance:</strong> ${player.statistics.distance.total} ${player.statistics.distance.unit}</div>
-              <div><strong>Goals:</strong> ${player.statistics.goals} | <strong>Assists:</strong> ${player.statistics.assists}</div>
-              <div><strong>Efficiency:</strong> ${player.statistics.touches.efficiency}%</div>
-            </div>
-          `,
-            )
-            .join("")}
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>Crowd Analysis</h2>
-        <div class="metric">
-          <strong>Total Attendance:</strong> ${data.results.crowdAnalysis.totalAttendance.toLocaleString()}<br>
-          <strong>Utilization Rate:</strong> ${data.results.crowdAnalysis.utilizationRate}%
-        </div>
-        ${data.results.crowdAnalysis.sections
-          .map(
-            (section: any) => `
-          <div class="crowd-item">
-            <strong>${section.name}:</strong> ${section.attendance.toLocaleString()} / ${section.capacity.toLocaleString()} (${section.density}%)<br>
-            Peak Noise: ${section.noiseLevel.peak} ${section.noiseLevel.unit}
-          </div>
-        `,
-          )
-          .join("")}
-      </div>
-
-      <div class="section">
-        <h2>Technical Information</h2>
-        <div class="metric">
-          <strong>Analysis Confidence:</strong> ${Math.round(data.results.metadata.confidence * 100)}%<br>
-          <strong>Quality Score:</strong> ${data.results.metadata.qualityScore}/10<br>
-          <strong>Processing Version:</strong> ${data.results.metadata.processingVersion}
-        </div>
-      </div>
-    `;
-  };
 
   // Download handlers for reports with backend JSON processing
   const handleDownloadReport = async (
@@ -1176,7 +1114,7 @@ Analysis Type: ${
               : "Crowd Reactions"
     }
 
-════════════════════�����═════════════��════════════════����══════
+═════��══════════════�����═════════════��════════════════����══════
 
 EXTRACTED VIDEO CLIPS WITH INSIGHTS
 ===================================
