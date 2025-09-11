@@ -96,57 +96,7 @@ import {
   Flag,
 } from "lucide-react";
 
-// Mock data for the dashboard
-const mockPlayers = [
-  {
-    id: 1,
-    name: "Marcus Bontempelli",
-    team: "Western Bulldogs",
-    position: "Midfielder",
-    kicks: 28,
-    handballs: 12,
-    marks: 8,
-    tackles: 6,
-    goals: 2,
-    efficiency: 87,
-  },
-  {
-    id: 2,
-    name: "Dustin Martin",
-    team: "Richmond",
-    position: "Forward",
-    kicks: 22,
-    handballs: 8,
-    marks: 6,
-    tackles: 4,
-    goals: 3,
-    efficiency: 82,
-  },
-  {
-    id: 3,
-    name: "Patrick Dangerfield",
-    team: "Geelong",
-    position: "Midfielder",
-    kicks: 25,
-    handballs: 15,
-    marks: 7,
-    tackles: 8,
-    goals: 1,
-    efficiency: 84,
-  },
-  {
-    id: 4,
-    name: "Max Gawn",
-    team: "Melbourne",
-    position: "Ruckman",
-    kicks: 18,
-    handballs: 6,
-    marks: 10,
-    tackles: 3,
-    goals: 1,
-    efficiency: 78,
-  },
-];
+// Mock data moved to @/data/mock
 
 const matchEvents = [
   {
