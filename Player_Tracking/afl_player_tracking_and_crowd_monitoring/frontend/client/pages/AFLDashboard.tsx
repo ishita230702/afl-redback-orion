@@ -9,6 +9,7 @@ import TeamMatchFilters from "@/components/dashboard/TeamMatchFilters";
 import TeamMatchCompare from "@/components/dashboard/TeamMatchCompare";
 import PlayerComparison from "@/components/dashboard/PlayerComparison";
 import type { QueueItem } from "@/types/dashboard";
+import { useProcessingQueue } from "@/hooks/use-processing-queue";
 import { useNavigate } from "react-router-dom";
 import { downloadText, downloadFile } from "@/lib/download";
 import { formatTimeAgo, formatETA } from "@/lib/format";
@@ -455,35 +456,8 @@ export default function AFLDashboard() {
   const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedAnalysisItem, setSelectedAnalysisItem] = useState<any>(null);
 
-  // Processing Queue state - starts empty, only shows actual uploads
-  const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
-
-  // Processing queue management functions
-
-  const retryProcessing = (itemId: string) => {
-    setProcessingQueue((prev) =>
-      prev.map((item) =>
-        item.id === itemId
-          ? {
-              ...item,
-              status: "queued",
-              progress: 0,
-              processingStage: "queue_waiting",
-              retryCount: item.retryCount + 1,
-              estimatedCompletion: new Date(
-                Date.now() + Math.random() * 3600000 + 1800000,
-              ).toISOString(),
-              // If this was a UI-controlled item, it should remain so after retry
-              isUIControlled: item.isUIControlled || false,
-            }
-          : item,
-      ),
-    );
-  };
-
-  const removeFromQueue = (itemId: string) => {
-    setProcessingQueue((prev) => prev.filter((item) => item.id !== itemId));
-  };
+  // Processing Queue state and actions
+  const { processingQueue, setProcessingQueue, retryProcessing, removeFromQueue } = useProcessingQueue();
 
 
 
