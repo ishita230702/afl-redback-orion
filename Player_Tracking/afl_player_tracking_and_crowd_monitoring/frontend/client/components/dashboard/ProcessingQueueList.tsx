@@ -12,22 +12,20 @@ import { Clock, Download, Eye, ChevronDown, FileText, Zap } from "lucide-react";
 import QueueStatusIcon from "@/components/dashboard/QueueStatusIcon";
 import type { QueueItem } from "@/types/dashboard";
 
+import { formatTimeAgo, formatETA } from "@/lib/format";
+
 export function ProcessingQueueList({
   items,
   onRetry,
   onRemove,
   onView,
   onDownload,
-  formatTimeAgo,
-  formatETA,
 }: {
   items: QueueItem[];
   onRetry: (id: string) => void;
   onRemove: (id: string) => void;
   onView: (item: QueueItem) => void;
   onDownload: (item: QueueItem, format: "pdf" | "json" | "txt") => void;
-  formatTimeAgo: (ts: string) => string;
-  formatETA: (ts: string | null) => string;
 }) {
   return (
     <div className="space-y-4">
