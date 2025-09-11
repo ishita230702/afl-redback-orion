@@ -134,8 +134,39 @@ export default function PlayerPerformanceTab(props: PlayerPerformanceTabProps) {
             <CardDescription>View AFL player profiles with stats and performance data</CardDescription>
           </CardHeader>
           <CardContent>
-            {/* For brevity, reuse existing layout from page; omitted here as logic mirrors original */}
-            {/* This can be further split into a PlayerCard component if needed. */}
+            {showAllCards ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {playerCards.map((card, index) => (
+                  <div key={card.id} className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer" onClick={() => handleCardClick(card, index)}>
+                    <img src={card.image} alt={card.name} className="w-full h-40 object-cover" />
+                    <div className="p-3">
+                      <div className="text-sm text-gray-500">#{card.number} • {card.team}</div>
+                      <div className="font-semibold">{card.name}</div>
+                      <div className="grid grid-cols-3 gap-2 text-xs mt-2">
+                        <div><div className="font-bold">{card.stats.kicks}</div><div className="text-gray-500">Kicks</div></div>
+                        <div><div className="font-bold">{card.stats.marks}</div><div className="text-gray-500">Marks</div></div>
+                        <div><div className="font-bold">{card.stats.tackles}</div><div className="text-gray-500">Tackles</div></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              selectedCard && (
+                <div className="max-w-2xl mx-auto border rounded-lg overflow-hidden shadow">
+                  <img src={selectedCard.image} alt={selectedCard.name} className="w-full h-64 object-cover" />
+                  <div className="p-4">
+                    <div className="text-sm text-gray-500">#{selectedCard.number} • {selectedCard.team}</div>
+                    <div className="font-bold text-lg">{selectedCard.name}</div>
+                    <div className="grid grid-cols-3 gap-4 text-sm mt-3">
+                      <div><div className="font-bold">{selectedCard.stats.goalAccuracy}%</div><div className="text-gray-500">Accuracy</div></div>
+                      <div><div className="font-bold">{selectedCard.stats.disposals}</div><div className="text-gray-500">Disposals</div></div>
+                      <div><div className="font-bold">{selectedCard.stats.handballs}</div><div className="text-gray-500">Handballs</div></div>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
           </CardContent>
         </Card>
 
