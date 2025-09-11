@@ -628,38 +628,7 @@ export default function AFLDashboard() {
     navigate("/");
   };
 
-  // Video upload handlers
-  const handleVideoFileSelect = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      const validTypes = [
-        "video/mp4",
-        "video/mov",
-        "video/avi",
-        "video/quicktime",
-      ];
-      if (!validTypes.includes(file.type)) {
-        setVideoAnalysisError(
-          "Please select a valid video file (MP4, MOV, or AVI)",
-        );
-        return;
-      }
-
-      // Validate file size (max 500MB)
-      const maxSize = 500 * 1024 * 1024; // 500MB in bytes
-      if (file.size > maxSize) {
-        setVideoAnalysisError("File size must be less than 500MB");
-        return;
-      }
-
-      setSelectedVideoFile(file);
-      setVideoAnalysisError(null);
-      setVideoAnalysisComplete(false);
-    }
-  };
+  /* Video upload handlers moved to useVideoAnalysis hook */
 
   const handleFocusAreaChange = (area: string, checked: boolean) => {
     if (checked) {
