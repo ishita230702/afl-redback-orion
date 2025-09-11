@@ -217,3 +217,132 @@ export const generateDashboardInsights = () => {
   }));
   return { playerStats, crowdDensity };
 };
+
+export const buildPlayerPerformanceReportHTML = (args: any) => {
+  const { selectedPlayer, comparisonPlayer, comparisonData } = args || {};
+  const now = new Date().toLocaleString();
+  return `
+    <div class="section">
+      <h1>Player Performance Report</h1>
+      <div class="metric">
+        <strong>Generated:</strong> ${now}<br>
+        <strong>Primary Player:</strong> ${selectedPlayer?.name || "N/A"}<br>
+        <strong>Comparison:</strong> ${comparisonPlayer?.name || "N/A"}
+      </div>
+      <div class="section">
+        <h2>Snapshot</h2>
+        <div class="player-grid">
+          ${[selectedPlayer, comparisonPlayer]
+            .filter(Boolean)
+            .map((p: any) => `
+              <div class="player-card">
+                <h3 style="margin:0 0 8px 0;color:#059669;">${p.name}</h3>
+                <div class="player-team">${p.team} - ${p.position}</div>
+                <div><strong>Kicks:</strong> ${p.kicks}</div>
+                <div><strong>Handballs:</strong> ${p.handballs}</div>
+                <div><strong>Marks:</strong> ${p.marks}</div>
+                <div><strong>Tackles:</strong> ${p.tackles}</div>
+                <div><strong>Goals:</strong> ${p.goals}</div>
+                <div><strong>Efficiency:</strong> ${p.efficiency}%</div>
+              </div>
+            `)
+            .join("")}
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Comparison Table</h2>
+        <div class="metric">
+          ${comparisonData
+            ?.map(
+              (row: any) => `
+              <div style="display:flex;gap:12px;justify-content:space-between;border-bottom:1px solid #e5e7eb;padding:6px 0;">
+                <div style="width:160px"><strong>${row.stat}</strong></div>
+                <div>${selectedPlayer?.name}: ${row[selectedPlayer?.name]}</div>
+                <div>${comparisonPlayer?.name}: ${row[comparisonPlayer?.name]}</div>
+              </div>`,
+            )
+            .join("") || "No comparison data"}
+        </div>
+      </div>
+    `;
+};
+
+export const buildTeamPerformanceReportHTML = (args: any) => {
+  const { teamA, teamB, teamCompare, summary, matches } = args || {};
+  const now = new Date().toLocaleString();
+  const a = teamCompare?.a || {}; const b = teamCompare?.b || {};
+  return `
+    <div class="section">
+      <h1>Team Performance Report</h1>
+      <div class="metric">
+        <strong>Generated:</strong> ${now}<br>
+        <strong>Teams:</strong> ${teamA || "All"} vs ${teamB || "All"}
+      </div>
+    </div>
+    <div class="section">
+      <h2>Summary</h2>
+      <div class="metric">
+        Matches: ${summary?.games || 0} • Goals: ${summary?.goals || 0} • Disposals: ${(summary?.disposals || 0).toLocaleString()} • Inside 50s: ${summary?.inside50 || 0}
+      </div>
+    </div>
+    <div class="section">
+      <h2>Totals</h2>
+      <div class="metric">
+        <div><strong>${teamA} Goals:</strong> ${a.goals || 0} • <strong>${teamB} Goals:</strong> ${b.goals || 0}</div>
+        <div><strong>${teamA} Disposals:</strong> ${(a.disposals || 0).toLocaleString()} • <strong>${teamB} Disposals:</strong> ${(b.disposals || 0).toLocaleString()}</div>
+        <div><strong>${teamA} Marks:</strong> ${a.marks || 0} • <strong>${teamB} Marks:</strong> ${b.marks || 0}</div>
+        <div><strong>${teamA} Tackles:</strong> ${a.tackles || 0} • <strong>${teamB} Tackles:</strong> ${b.tackles || 0}</div>
+        <div><strong>${teamA} Efficiency:</strong> ${teamCompare?.aEff || 0}% • <strong>${teamB} Efficiency:</strong> ${teamCompare?.bEff || 0}%</div>
+      </div>
+    </div>
+    <div class="section">
+      <h2>Matches</h2>
+      ${matches
+        ?.map(
+          (m: any) => `
+          <div class="metric">
+            <strong>${m.teams.home} vs ${m.teams.away}</strong> • ${m.venue} • ${new Date(m.date).toLocaleDateString()}<br>
+            Score: ${m.stats.home.goals * 6 + m.stats.home.behinds} - ${m.stats.away.goals * 6 + m.stats.away.behinds}
+          </div>`,
+        )
+        .join("") || "No matches"}
+    </div>
+  `;
+};
+
+export const buildCrowdMonitorReportHTML = (args: any) => {
+  const { zones, timeline } = args || {};
+  const now = new Date().toLocaleString();
+  const totalAttendance = zones?.reduce((s: number, z: any) => s + z.current, 0) || 0;
+  const totalCapacity = zones?.reduce((s: number, z: any) => s + z.capacity, 0) || 0;
+  return `
+    <div class="section">
+      <h1>Crowd Monitor Report</h1>
+      <div class="metric">
+        <strong>Generated:</strong> ${now}<br>
+        <strong>Total Attendance:</strong> ${totalAttendance.toLocaleString()} / ${totalCapacity.toLocaleString()}
+      </div>
+    </div>
+    <div class="section">
+      <h2>Zones</h2>
+      ${zones
+        ?.map(
+          (z: any) => `
+          <div class="crowd-item">
+            <strong>${z.zone}:</strong> ${z.current.toLocaleString()} / ${z.capacity.toLocaleString()} (${z.density}%) • Trend: ${z.trend}
+          </div>`,
+        )
+        .join("") || "No zones"}
+    </div>
+    <div class="section">
+      <h2>Timeline</h2>
+      ${timeline
+        ?.map(
+          (t: any) => `
+          <div class="metric">${t.time}: Attendance ${t.attendance.toLocaleString()} • Density ${t.density}% • Critical ${t.critical} • High ${t.high}</div>`,
+        )
+        .join("") || "No timeline"}
+    </div>
+  `;
+};
