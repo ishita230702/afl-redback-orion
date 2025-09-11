@@ -9,7 +9,6 @@ export function AuthProviderButtons({
   onGoogle: () => void;
 }) {
   const googleText = mode === "signup" ? "Sign up with Google" : "Continue with Google";
-  const appleText = mode === "signup" ? "Sign up with Apple" : "Continue with Apple";
 
   return (
     <div className="space-y-3">
