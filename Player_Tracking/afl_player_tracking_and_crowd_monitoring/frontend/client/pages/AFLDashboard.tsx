@@ -2626,59 +2626,28 @@ export default function AFLDashboard() {
 
           {/* Video Analytics Input */}
           <TabsContent value="video" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-6">
-              <VideoUploadPanel
-                selectedVideoFile={selectedVideoFile}
-                videoAnalysisError={videoAnalysisError}
-                isVideoUploading={isVideoUploading}
-                videoUploadProgress={videoUploadProgress}
-                isVideoAnalyzing={isVideoAnalyzing}
-                videoAnalysisProgress={videoAnalysisProgress}
-                selectedAnalysisType={selectedAnalysisType}
-                setSelectedAnalysisType={setSelectedAnalysisType}
-                selectedFocusAreas={selectedFocusAreas}
-                onFocusAreaChange={handleFocusAreaChange}
-                onFileSelect={handleVideoFileSelect}
-                onStart={uploadAndAnalyzeVideo}
-                disabledStart={!selectedVideoFile || isVideoUploading || isVideoAnalyzing}
-              />
-
-              <AnalysisResultsPanel
-                videoAnalysisComplete={videoAnalysisComplete}
-                selectedAnalysisType={selectedAnalysisType}
-                selectedVideoFileName={selectedVideoFile?.name}
-                selectedFocusAreas={selectedFocusAreas}
-                onDownloadVideoClips={handleDownloadVideoClips}
-                onDownloadReport={handleDownloadReport}
-              />
-            </div>
-
-            {/* Processing Queue */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  Processing Queue
-                  <Badge variant="outline" className="ml-auto">
-                    {processingQueue.length} items
-                  </Badge>
-                </CardTitle>
-                <CardDescription>
-                  Track the status of your video analysis requests
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <ProcessingQueueList
-                    items={processingQueue}
-                    onRetry={retryProcessing}
-                    onRemove={removeFromQueue}
-                    onView={handleViewAnalysis}
-                    onDownload={handleDownloadFromQueue}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+            <VideoTab
+              selectedVideoFile={selectedVideoFile}
+              videoAnalysisError={videoAnalysisError}
+              isVideoUploading={isVideoUploading}
+              videoUploadProgress={videoUploadProgress}
+              isVideoAnalyzing={isVideoAnalyzing}
+              videoAnalysisProgress={videoAnalysisProgress}
+              videoAnalysisComplete={videoAnalysisComplete}
+              selectedAnalysisType={selectedAnalysisType}
+              setSelectedAnalysisType={setSelectedAnalysisType}
+              selectedFocusAreas={selectedFocusAreas}
+              handleFocusAreaChange={handleFocusAreaChange}
+              handleVideoFileSelect={handleVideoFileSelect}
+              uploadAndAnalyzeVideo={uploadAndAnalyzeVideo}
+              handleDownloadVideoClips={handleDownloadVideoClips}
+              handleDownloadReport={handleDownloadReport}
+              processingQueue={processingQueue}
+              onRetry={retryProcessing}
+              onRemove={removeFromQueue}
+              onView={handleViewAnalysis}
+              onDownload={handleDownloadFromQueue}
+            />
           </TabsContent>
         </Tabs>
       </div>
