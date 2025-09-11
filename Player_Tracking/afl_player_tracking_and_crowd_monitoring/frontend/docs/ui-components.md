@@ -5,11 +5,13 @@ Dashboard components (client/components/dashboard)
 - QueueStatusIcon.tsx – Visual status indicator for queue items
 - VideoUploadPanel.tsx – File input, analysis options, progress
 - AnalysisResultsPanel.tsx – Post-analysis charts/metrics
-- ReportsPanel.tsx – Download/export actions
 - TeamMatchFilters.tsx – Search/filter controls for team matches
 - TeamMatchCompare.tsx – Compare two teams across key stats
 - TeamCompareBar.tsx – Small bar comparison widget
 - PlayerComparison.tsx – Player stats comparison chart
+
+Downloads tab
+- Implemented directly in AFLDashboard.tsx with buttons to export Player, Team, and Crowd PDFs
 
 Auth & Landing (client/components/auth)
 - HeaderBrand.tsx – App brand and badges
