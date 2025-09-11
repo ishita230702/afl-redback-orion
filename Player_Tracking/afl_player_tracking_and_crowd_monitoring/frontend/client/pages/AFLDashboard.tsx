@@ -630,13 +630,6 @@ export default function AFLDashboard() {
 
   /* Video upload handlers moved to useVideoAnalysis hook */
 
-  const handleFocusAreaChange = (area: string, checked: boolean) => {
-    if (checked) {
-      setSelectedFocusAreas([...selectedFocusAreas, area]);
-    } else {
-      setSelectedFocusAreas(selectedFocusAreas.filter((a) => a !== area));
-    }
-  };
 
   const uploadAndAnalyzeVideo = async () => {
     if (!selectedVideoFile) {
