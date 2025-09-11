@@ -50,7 +50,7 @@ export default function Login() {
       localStorage.setItem("userEmail", loginForm.email);
       navigate("/afl-dashboard");
     } else {
-      setError(res.message);
+      if ("message" in res) setError(res.message);
     }
     setIsLoading(false);
   };
