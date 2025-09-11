@@ -4,11 +4,9 @@ import { Button } from "@/components/ui/button";
 export function AuthProviderButtons({
   mode,
   onGoogle,
-  onApple,
 }: {
   mode: "login" | "signup";
   onGoogle: () => void;
-  onApple: () => void;
 }) {
   const googleText = mode === "signup" ? "Sign up with Google" : "Continue with Google";
   const appleText = mode === "signup" ? "Sign up with Apple" : "Continue with Apple";
