@@ -7,7 +7,7 @@ Login flow
 - On success: sets localStorage (isAuthenticated, userEmail) → navigate to dashboard
 
 Dashboard navigation
-- Tabs: Team, Performance, Crowd, Reports, Video
+- Tabs: Team, Performance, Crowd, Downloads, Video
 - Common helpers: client/lib/format.ts, client/lib/download.ts
 
 Upload → Queue → Analysis → Export (end-to-end)
