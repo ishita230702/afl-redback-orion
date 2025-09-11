@@ -345,10 +345,14 @@ export default function AFLDashboard() {
   };
 
   // PDF Downloads for dashboard sections
+  const [includeComparison, setIncludeComparison] = useState(true);
+  const [includeMatches, setIncludeMatches] = useState(true);
+  const [includeTimelineChart, setIncludeTimelineChart] = useState(true);
+
   const handleDownloadPlayerPDF = () => {
     const html = buildPlayerPerformanceReportHTML({
       selectedPlayer,
-      comparisonPlayer,
+      comparisonPlayer: includeComparison ? comparisonPlayer : null,
       comparisonData: playerComparisonData,
     });
     generateDashboardPDF(html);
@@ -360,14 +364,14 @@ export default function AFLDashboard() {
       teamB,
       teamCompare,
       summary: teamSummary,
-      matches: teamFiltered,
+      matches: includeMatches ? teamFiltered : [],
     });
     generateDashboardPDF(html);
   };
 
   const handleDownloadCrowdPDF = () => {
     const timeline = generateTimelineFromStadiumData(crowdZones);
-    const html = buildCrowdMonitorReportHTML({ zones: crowdZones, timeline });
+    const html = buildCrowdMonitorReportHTML({ zones: crowdZones, timeline, includeTimeline: includeTimelineChart });
     generateDashboardPDF(html);
   };
 
@@ -974,12 +978,20 @@ export default function AFLDashboard() {
       <div className="container mx-auto px-4 py-6">
         <Tabs defaultValue="video" className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="video" className="flex items-center gap-2">
+              <Video className="w-4 h-4" />
+              Video Analysis
+            </TabsTrigger>
             <TabsTrigger
               value="performance"
               className="flex items-center gap-2"
             >
               <BarChart3 className="w-4 h-4" />
               Player Performance
+            </TabsTrigger>
+            <TabsTrigger value="team" className="flex items-center gap-2">
+              <Target className="w-4 h-4" />
+              Team Match
             </TabsTrigger>
             <TabsTrigger value="crowd" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
@@ -988,14 +1000,6 @@ export default function AFLDashboard() {
             <TabsTrigger value="downloads" className="flex items-center gap-2">
               <Download className="w-4 h-4" />
               Downloads
-            </TabsTrigger>
-            <TabsTrigger value="team" className="flex items-center gap-2">
-              <Target className="w-4 h-4" />
-              Team Match
-            </TabsTrigger>
-            <TabsTrigger value="video" className="flex items-center gap-2">
-              <Video className="w-4 h-4" />
-              Video Analysis
             </TabsTrigger>
           </TabsList>
 
@@ -1588,7 +1592,7 @@ export default function AFLDashboard() {
                                           ⭐ Top Performer
                                         </div>
                                         <div className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded text-white text-sm">
-                                          ��� Best Midfielder
+                                          💪 Best Midfielder
                                         </div>
                                       </div>
                                     )}
@@ -2525,9 +2529,9 @@ export default function AFLDashboard() {
             </Tabs>
           </TabsContent>
 
-          {/* Downloads: Generate PDF reports for sections */}
+          {/* Downloads: Generate realistic PDF reports for sections */}
           <TabsContent value="downloads" className="space-y-6">
-            <div className="grid lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -2535,10 +2539,18 @@ export default function AFLDashboard() {
                     Player Performance PDF
                   </CardTitle>
                   <CardDescription>
-                    Export current player stats and comparison as a styled PDF
+                    Export current player and optional comparison
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
+                  <div className="text-sm text-gray-600">
+                    Primary: <span className="font-medium">{selectedPlayer.name}</span><br/>
+                    Comparison: <span className="font-medium">{comparisonPlayer.name}</span>
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" className="rounded" checked={includeComparison} onChange={(e)=>setIncludeComparison(e.target.checked)} />
+                    Include comparison
+                  </label>
                   <Button onClick={handleDownloadPlayerPDF} className="w-full">
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>
@@ -2552,10 +2564,17 @@ export default function AFLDashboard() {
                     Team Performance PDF
                   </CardTitle>
                   <CardDescription>
-                    Export team summary, totals, and recent matches
+                    Uses selected teams and includes recent matches
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
+                  <div className="text-sm text-gray-600">
+                    Teams: <span className="font-medium">{teamA}</span> vs <span className="font-medium">{teamB}</span>
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" className="rounded" checked={includeMatches} onChange={(e)=>setIncludeMatches(e.target.checked)} />
+                    Include matches list
+                  </label>
                   <Button onClick={handleDownloadTeamPDF} className="w-full">
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>
@@ -2569,10 +2588,17 @@ export default function AFLDashboard() {
                     Crowd Monitor PDF
                   </CardTitle>
                   <CardDescription>
-                    Export current zone densities and timeline summary
+                    Export current zones, timeline table and chart
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
+                  <div className="text-sm text-gray-600">
+                    Sections: <span className="font-medium">{crowdZones.length}</span> • Total attendance: <span className="font-medium">{crowdZones.reduce((s,z)=>s+z.current,0).toLocaleString()}</span>
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" className="rounded" checked={includeTimelineChart} onChange={(e)=>setIncludeTimelineChart(e.target.checked)} />
+                    Include timeline chart
+                  </label>
                   <Button onClick={handleDownloadCrowdPDF} className="w-full">
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>

@@ -311,11 +311,45 @@ export const buildTeamPerformanceReportHTML = (args: any) => {
   `;
 };
 
+const renderTimelineSVG = (timeline: any[] = []) => {
+  if (!timeline.length) return "";
+  const width = 600;
+  const height = 180;
+  const padding = 30;
+  const maxAttendance = Math.max(...timeline.map((t: any) => t.attendance), 1);
+  const xStep = (width - padding * 2) / Math.max(timeline.length - 1, 1);
+  const points = timeline
+    .map((t: any, i: number) => {
+      const x = padding + i * xStep;
+      const y = height - padding - (t.attendance / maxAttendance) * (height - padding * 2);
+      return `${x},${y}`;
+    })
+    .join(" ");
+  const axis = `
+    <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="#9CA3AF" stroke-width="1" />
+    <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}" stroke="#9CA3AF" stroke-width="1" />
+  `;
+  const labels = timeline
+    .map((t: any, i: number) => {
+      const x = padding + i * xStep;
+      const y = height - padding + 14;
+      return `<text x="${x}" y="${y}" font-size="10" text-anchor="middle" fill="#6B7280">${t.time}</text>`;
+    })
+    .join("");
+  return `
+  <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Timeline attendance chart">
+    ${axis}
+    <polyline fill="none" stroke="#2563eb" stroke-width="2" points="${points}" />
+  ${labels}
+  </svg>`;
+};
+
 export const buildCrowdMonitorReportHTML = (args: any) => {
-  const { zones, timeline } = args || {};
+  const { zones, timeline, includeTimeline = true } = args || {};
   const now = new Date().toLocaleString();
   const totalAttendance = zones?.reduce((s: number, z: any) => s + z.current, 0) || 0;
   const totalCapacity = zones?.reduce((s: number, z: any) => s + z.capacity, 0) || 0;
+  const timelineSVG = includeTimeline ? renderTimelineSVG(timeline) : "";
   return `
     <div class="section">
       <h1>Crowd Monitor Report</h1>
@@ -335,8 +369,12 @@ export const buildCrowdMonitorReportHTML = (args: any) => {
         )
         .join("") || "No zones"}
     </div>
+    ${includeTimeline ? `<div class="section">
+      <h2>Timeline Chart</h2>
+      <div class="metric" style="overflow:hidden">${timelineSVG}</div>
+    </div>` : ""}
     <div class="section">
-      <h2>Timeline</h2>
+      <h2>Timeline Details</h2>
       ${timeline
         ?.map(
           (t: any) => `
