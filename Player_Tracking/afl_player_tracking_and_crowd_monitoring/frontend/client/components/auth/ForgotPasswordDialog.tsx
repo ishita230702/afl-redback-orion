@@ -63,7 +63,7 @@ export default function ForgotPasswordDialog({
     if (res.success) {
       setStep(4);
     } else {
-      setError(res.message);
+      if ("message" in res) setError(res.message);
     }
     setIsLoading(false);
   };
