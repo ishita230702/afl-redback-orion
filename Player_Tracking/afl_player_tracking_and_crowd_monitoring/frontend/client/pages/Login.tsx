@@ -95,7 +95,7 @@ export default function Login() {
       });
       navigate("/afl-dashboard");
     } else {
-      setError(res.message);
+      if ("message" in res) setError(res.message);
     }
     setIsLoading(false);
   };
