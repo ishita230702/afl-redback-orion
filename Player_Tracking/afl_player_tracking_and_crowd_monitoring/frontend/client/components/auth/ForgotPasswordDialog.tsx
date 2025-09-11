@@ -74,7 +74,12 @@ export default function ForgotPasswordDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {step > 1 && step < 4 && (
-              <Button variant="ghost" size="sm" onClick={() => setStep(Math.max(1, (step - 1) as 1))} className="p-0 h-6 w-6">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setStep(step === 2 ? 1 : 2)}
+                className="p-0 h-6 w-6"
+              >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             )}
