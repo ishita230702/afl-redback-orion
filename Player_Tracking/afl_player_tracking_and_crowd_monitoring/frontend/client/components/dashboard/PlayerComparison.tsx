@@ -3,8 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Target, CartesianGrid, ResponsiveContainer, LineChart, XAxis, YAxis, Tooltip, Legend, Line } from "lucide-react";
-// Note: Recharts components must be imported from 'recharts'
+import { Target } from "lucide-react";
 import { ResponsiveContainer as RC, LineChart as RL, CartesianGrid as RG, XAxis as RX, YAxis as RY, Tooltip as RT, Legend as RLg, Line as RLine } from "recharts";
 
 export default function PlayerComparison({
