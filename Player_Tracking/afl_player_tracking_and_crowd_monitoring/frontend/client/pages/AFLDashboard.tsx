@@ -1840,45 +1840,16 @@ Export ID: ${Date.now()}-${Math.random().toString(36).substr(2, 9)}
           {/* Team Match Performance */}
           <TabsContent value="team" className="space-y-6">
             {/* Filters */}
-            <div className="bg-white border rounded-lg p-4">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch">
-                <div className="sm:col-span-1">
-                  <Input
-                    placeholder="Search team, venue..."
-                    value={teamSearch}
-                    onChange={(e) => setTeamSearch(e.target.value)}
-                  />
-                </div>
-                <div className="sm:col-span-1">
-                  <Select value={teamFilter} onValueChange={setTeamFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Team" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teamTeams.map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {t === "all" ? "All Teams" : t}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="sm:col-span-1">
-                  <Select value={teamRound} onValueChange={setTeamRound}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Round" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {teamRounds.map((r) => (
-                        <SelectItem key={r} value={r}>
-                          {r === "all" ? "All Rounds" : r}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
+            <TeamMatchFilters
+              teamSearch={teamSearch}
+              setTeamSearch={setTeamSearch}
+              teamFilter={teamFilter}
+              setTeamFilter={setTeamFilter}
+              teamRound={teamRound}
+              setTeamRound={setTeamRound}
+              teamRounds={teamRounds}
+              teamTeams={teamTeams}
+            />
 
             {/* Summary */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
