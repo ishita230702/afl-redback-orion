@@ -38,17 +38,9 @@ export default function Login() {
     role: "",
     agreeTerms: false,
   });
-  const [resetForm, setResetForm] = useState({
-    email: "",
-    resetCode: "",
-    newPassword: "",
-    confirmNewPassword: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [resetStep, setResetStep] = useState(1); // 1: email, 2: code, 3: new password, 4: success
-  const [resetMessage, setResetMessage] = useState("");
 
   // Valid demo credentials for authentication
   const validCredentials = [
