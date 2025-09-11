@@ -13,38 +13,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Activity,
-  Users,
-  BarChart3,
-  Video,
-  Shield,
-  Eye,
-  EyeOff,
-  Smartphone,
-  Monitor,
-  User,
-  Mail,
-  Lock,
-  Building,
-  ArrowLeft,
-  CheckCircle,
-} from "lucide-react";
+import { Activity, Users, BarChart3, Video, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import ResetPasswordDialog from "@/components/auth/ResetPasswordDialog";
 
 export default function Login() {
   const navigate = useNavigate();
