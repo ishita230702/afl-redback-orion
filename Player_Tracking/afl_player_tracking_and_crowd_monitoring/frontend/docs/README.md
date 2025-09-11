@@ -10,3 +10,4 @@ This documentation covers architecture, setup, key modules, workflows, and exten
 - Data & Types: ./data-and-types.md
 - Extending the Platform: ./extending.md
 - Troubleshooting: ./troubleshooting.md
+- Conventions & Code Style: ./conventions.md

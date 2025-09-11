@@ -10,12 +10,37 @@ Dashboard navigation
 - Tabs: Team, Performance, Crowd, Reports, Video
 - Common helpers: client/lib/format.ts, client/lib/download.ts
 
-Upload → Queue → Analysis → Export
+Upload → Queue → Analysis → Export (end-to-end)
+
+Diagram
+
+User
+  │
+  │ Select file (VideoUploadPanel → useVideoAnalysis.handleVideoFileSelect)
+  ▼
+Validator
+  │ checks type/size
+  ▼
+Queue Controller (useVideoAnalysis)
+  │ create QueueItem { status: uploading, isUIControlled: true }
+  │ update progress 0→100
+  ▼
+Analysis Phase
+  │ status: analyzing, progress increases
+  ▼
+Completion
+  │ status: completed, completedTime set
+  ▼
+Exports (handleDownloadReport)
+  ├─ TXT: convertBackendDataToText → download
+  ├─ JSON: stringify → download
+  └─ PDF: convertBackendDataToHTML → generateDashboardPDF → print
+
+Step-by-step
 1) Select video (useVideoAnalysis.handleVideoFileSelect)
    - Validates type/size
 2) Start analysis (useVideoAnalysis.uploadAndAnalyzeVideo)
-   - Adds QueueItem (status: uploading, isUIControlled: true)
-   - Simulates upload progress → analysis progress → completed
+   - Adds QueueItem; simulates upload then analysis
    - Persists a lightweight summary in localStorage
 3) Queue updates (AFLDashboard useEffect)
    - Background simulator updates non-UI-controlled items (status/stage/progress)
