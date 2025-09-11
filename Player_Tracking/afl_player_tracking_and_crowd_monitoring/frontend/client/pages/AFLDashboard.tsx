@@ -8,6 +8,7 @@ import AnalysisResultsPanel from "@/components/dashboard/AnalysisResultsPanel";
 import TeamMatchFilters from "@/components/dashboard/TeamMatchFilters";
 import TeamMatchCompare from "@/components/dashboard/TeamMatchCompare";
 import PlayerComparison from "@/components/dashboard/PlayerComparison";
+import DownloadsPanel from "@/components/dashboard/DownloadsPanel";
 import type { QueueItem } from "@/types/dashboard";
 import { useProcessingQueue } from "@/hooks/use-processing-queue";
 import { useVideoAnalysis } from "@/hooks/use-video-analysis";
