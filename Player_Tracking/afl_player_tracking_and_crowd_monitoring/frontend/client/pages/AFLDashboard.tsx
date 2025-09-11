@@ -1,4 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
+import QueueStatusIcon from "@/components/dashboard/QueueStatusIcon";
+import TeamCompareBar from "@/components/dashboard/TeamCompareBar";
 import { useNavigate } from "react-router-dom";
 import { downloadText, downloadFile } from "@/lib/download";
 import { Button } from "@/components/ui/button";
@@ -441,33 +443,6 @@ export default function AFLDashboard() {
     return { a, b, aEff, bEff };
   }, [teamA, teamB]);
 
-  const TeamCompareBar = ({ label, aLabel, aValue, bLabel, bValue }: { label: string; aLabel: string; aValue: number; bLabel: string; bValue: number }) => {
-    const max = Math.max(aValue, bValue) || 1;
-    const aPct = Math.round((aValue / max) * 100);
-    const bPct = Math.round((bValue / max) * 100);
-    return (
-      <div className="space-y-2">
-        <div className="flex items-center justify-between text-sm">
-          <span className="font-medium">{label}</span>
-          <span className="text-gray-600">{aValue} vs {bValue}</span>
-        </div>
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="w-28 text-xs text-purple-700 truncate">{aLabel}</span>
-            <div className="flex-1 bg-gray-200 rounded-full h-3">
-              <div className="bg-purple-500 h-3 rounded-full" style={{ width: `${aPct}%` }} />
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-28 text-xs text-orange-700 truncate">{bLabel}</span>
-            <div className="flex-1 bg-gray-200 rounded-full h-3">
-              <div className="bg-orange-600 h-3 rounded-full" style={{ width: `${bPct}%` }} />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
 
   // Player card display state
   const [showAllCards, setShowAllCards] = useState(false);
@@ -499,27 +474,6 @@ export default function AFLDashboard() {
   const [processingQueue, setProcessingQueue] = useState<QueueItem[]>([]);
 
   // Processing queue management functions
-  const StatusIcon = ({ status }: { status: string }) => {
-    switch (status) {
-      case "completed":
-        return <div className="w-3 h-3 rounded-full bg-orange-500" />;
-      case "analyzing":
-      case "processing":
-        return (
-          <div className="w-3 h-3 rounded-full bg-purple-500 animate-pulse" />
-        );
-      case "uploading":
-        return (
-          <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse" />
-        );
-      case "queued":
-        return <div className="w-3 h-3 rounded-full bg-gray-400" />;
-      case "failed":
-        return <div className="w-3 h-3 rounded-full bg-red-500" />;
-      default:
-        return <div className="w-3 h-3 rounded-full bg-gray-300" />;
-    }
-  };
 
   const retryProcessing = (itemId: string) => {
     setProcessingQueue((prev) =>
@@ -1692,7 +1646,7 @@ CLIP ANALYSIS SUMMARY
         parseFloat(section.density) > parseFloat(max.density) ? section : max,
       ).section
     }
-• Player tracking accuracy: 97.2%
+��� Player tracking accuracy: 97.2%
 
 CROWD RESPONSE CORRELATION
 ==========================
@@ -4327,7 +4281,7 @@ Generated on: ${new Date().toLocaleString()}
                     >
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <StatusIcon status={item.status} />
+                          <QueueStatusIcon status={item.status} />
                           <div className="flex-1">
                             <div className="font-medium text-gray-900">
                               {item.name}
