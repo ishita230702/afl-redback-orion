@@ -348,27 +348,50 @@ export default function AFLDashboard() {
   const [includeComparison, setIncludeComparison] = useState(true);
   const [includeMatches, setIncludeMatches] = useState(true);
   const [includeTimelineChart, setIncludeTimelineChart] = useState(true);
+  const [playerReportMode, setPlayerReportMode] = useState<'individual' | 'comparison'>("individual");
+  const [teamReportMode, setTeamReportMode] = useState<'individual' | 'comparison'>("comparison");
 
   const handleDownloadPlayerPDF = () => {
     const html = buildPlayerPerformanceReportHTML({
+      mode: playerReportMode,
       selectedPlayer,
-      comparisonPlayer: includeComparison ? comparisonPlayer : null,
-      comparisonData: playerComparisonData,
+      comparisonPlayer: playerReportMode === 'comparison' && includeComparison ? comparisonPlayer : null,
+      comparisonData: playerReportMode === 'comparison' ? playerComparisonData : null,
     });
     generateDashboardPDF(html);
   };
 
   const handleDownloadTeamPDF = () => {
-    if (teamA === 'all' && teamB === 'all') {
-      alert('Select Team A or Team B to generate a team report.');
+    const singleTeam = teamReportMode === 'individual' ? (teamA !== 'all' ? teamA : teamB) : null;
+    if (teamReportMode === 'individual') {
+      if (!singleTeam || singleTeam === 'all') {
+        alert('Select a team for the individual team report.');
+        return;
+      }
+    } else if (teamA === 'all' && teamB === 'all') {
+      alert('Select Team A or Team B to generate a comparison report.');
       return;
     }
+    const filteredForReport = includeMatches
+      ? teamMatches.filter(m => {
+          if (teamReportMode === 'individual') {
+            return m.teams.home === singleTeam || m.teams.away === singleTeam;
+          }
+          return (
+            (teamA !== 'all' && (m.teams.home === teamA || m.teams.away === teamA)) ||
+            (teamB !== 'all' && (m.teams.home === teamB || m.teams.away === teamB))
+          );
+        })
+      : [];
+
     const html = buildTeamPerformanceReportHTML({
+      mode: teamReportMode,
       teamA,
       teamB,
+      singleTeam,
       teamCompare,
       summary: teamSummary,
-      matches: includeMatches ? teamFiltered : [],
+      matches: filteredForReport,
     });
     generateDashboardPDF(html);
   };
@@ -2543,22 +2566,64 @@ export default function AFLDashboard() {
                     Player Performance PDF
                   </CardTitle>
                   <CardDescription>
-                    Export current player and optional comparison
+                    Export individual player, or compare two players
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="text-sm text-gray-600">
-                    Primary: <span className="font-medium">{selectedPlayer.name}</span><br/>
-                    Comparison: <span className="font-medium">{comparisonPlayer.name}</span>
-                  </div>
                   <div className="text-xs text-gray-500">Source: Player Performance</div>
-                  <div className="space-y-1">
-                    <div className="text-sm font-medium">Report type</div>
-                    <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" className="rounded" checked={includeComparison} onChange={(e)=>setIncludeComparison(e.target.checked)} />
-                      Include comparison (player vs player)
-                    </label>
+
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Mode</div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <label className="flex items-center gap-2">
+                        <input type="radio" name="player-mode" checked={playerReportMode==='individual'} onChange={()=>{setPlayerReportMode('individual'); setIncludeComparison(false);}} />
+                        Individual
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input type="radio" name="player-mode" checked={playerReportMode==='comparison'} onChange={()=>{setPlayerReportMode('comparison');}} />
+                        Comparison
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-sm font-medium">Primary Player</label>
+                        <Select value={selectedPlayer.name} onValueChange={(val)=>{ const p=mockPlayers.find(mp=>mp.name===val); if(p) setSelectedPlayer(p); }}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select player" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {mockPlayers.map((p)=> (
+                              <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {playerReportMode==='comparison' && (
+                        <div>
+                          <label className="text-sm font-medium">Comparison Player</label>
+                          <Select value={comparisonPlayer.name} onValueChange={(val)=>{ const p=mockPlayers.find(mp=>mp.name===val); if(p) setComparisonPlayer(p); }}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select player" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {mockPlayers.map((p)=> (
+                                <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+
+                    {playerReportMode==='comparison' && (
+                      <label className="flex items-center gap-2 text-sm">
+                        <input type="checkbox" className="rounded" checked={includeComparison} onChange={(e)=>setIncludeComparison(e.target.checked)} />
+                        Include comparison (player vs player)
+                      </label>
+                    )}
                   </div>
+
                   <Button onClick={handleDownloadPlayerPDF} className="w-full">
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>
@@ -2572,52 +2637,79 @@ export default function AFLDashboard() {
                     Team Performance PDF
                   </CardTitle>
                   <CardDescription>
-                    Uses selected teams and includes recent matches
+                    Export individual team, or compare two teams
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="text-sm text-gray-600">
-                    Teams: <span className="font-medium">{teamA === 'all' ? 'Select team A' : teamA}</span> vs <span className="font-medium">{teamB === 'all' ? 'Select team B' : teamB}</span>
-                  </div>
                   <div className="text-xs text-gray-500">Source: Team Match</div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-sm font-medium">Team A</label>
-                      <Select value={teamA} onValueChange={setTeamA}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select team" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {teamTeams.filter((t)=>t !== 'all').map((t)=> (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+
+                  <div className="space-y-3">
+                    <div className="text-sm font-medium">Mode</div>
+                    <div className="flex items-center gap-4 text-sm">
+                      <label className="flex items-center gap-2">
+                        <input type="radio" name="team-mode" checked={teamReportMode==='individual'} onChange={()=>setTeamReportMode('individual')} />
+                        Individual
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input type="radio" name="team-mode" checked={teamReportMode==='comparison'} onChange={()=>setTeamReportMode('comparison')} />
+                        Comparison
+                      </label>
                     </div>
-                    <div>
-                      <label className="text-sm font-medium">Team B</label>
-                      <Select value={teamB} onValueChange={setTeamB}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select team" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {teamTeams.filter((t)=>t !== 'all').map((t)=> (
-                            <SelectItem key={t} value={t}>{t}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+
+                    {teamReportMode==='individual' ? (
+                      <div>
+                        <label className="text-sm font-medium">Team</label>
+                        <Select value={teamA !== 'all' ? teamA : (teamTeams.find(t=>t!=='all') || 'all')} onValueChange={setTeamA}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select team" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {teamTeams.filter((t)=>t !== 'all').map((t)=> (
+                              <SelectItem key={t} value={t}>{t}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-sm font-medium">Team A</label>
+                          <Select value={teamA} onValueChange={setTeamA}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select team" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {teamTeams.filter((t)=>t !== 'all').map((t)=> (
+                                <SelectItem key={t} value={t}>{t}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium">Team B</label>
+                          <Select value={teamB} onValueChange={setTeamB}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select team" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {teamTeams.filter((t)=>t !== 'all').map((t)=> (
+                                <SelectItem key={t} value={t}>{t}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    <label className="flex items-center gap-2 text-sm">
+                      <input type="checkbox" className="rounded" checked={includeMatches} onChange={(e)=>setIncludeMatches(e.target.checked)} />
+                      Include matches list
+                    </label>
                   </div>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" className="rounded" checked={includeMatches} onChange={(e)=>setIncludeMatches(e.target.checked)} />
-                    Include matches list
-                  </label>
-                  <Button onClick={handleDownloadTeamPDF} className="w-full" disabled={teamA==='all' && teamB==='all'}>
+
+                  <Button onClick={handleDownloadTeamPDF} className="w-full">
                     <Download className="w-4 h-4 mr-2" /> Download PDF
                   </Button>
-                  {(teamA==='all' && teamB==='all') && (
-                    <div className="text-xs text-red-600">Pick at least one team to generate a focused report.</div>
-                  )}
                 </CardContent>
               </Card>
 
