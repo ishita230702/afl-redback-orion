@@ -6,7 +6,6 @@ import DemoAccessCard from "@/components/auth/DemoAccessCard";
 import LoginForm from "@/components/auth/LoginForm";
 import SignupForm from "@/components/auth/SignupForm";
 import ForgotPasswordDialog from "@/components/auth/ForgotPasswordDialog";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
