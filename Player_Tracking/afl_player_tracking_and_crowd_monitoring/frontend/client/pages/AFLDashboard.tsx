@@ -2552,188 +2552,75 @@ export default function AFLDashboard() {
             </Tabs>
           </TabsContent>
 
-          {/* Downloads: Generate realistic PDF reports for sections */}
+          {/* Downloads: encapsulated in DownloadsPanel */}
           <TabsContent value="downloads" className="space-y-6">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="w-5 h-5" />
-                    Player Performance PDF
-                  </CardTitle>
-                  <CardDescription>
-                    Export individual player, or compare two players
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-xs text-gray-500">Source: Player Performance</div>
-
-                  <div className="space-y-3">
-                    <div className="text-sm font-medium">Mode</div>
-                    <div className="flex items-center gap-4 text-sm">
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="player-mode" checked={playerReportMode==='individual'} onChange={()=>{setPlayerReportMode('individual'); setIncludeComparison(false);}} />
-                        Individual
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="player-mode" checked={playerReportMode==='comparison'} onChange={()=>{setPlayerReportMode('comparison');}} />
-                        Comparison
-                      </label>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-sm font-medium">Primary Player</label>
-                        <Select value={selectedPlayer.name} onValueChange={(val)=>{ const p=mockPlayers.find(mp=>mp.name===val); if(p) setSelectedPlayer(p); }}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select player" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {mockPlayers.map((p)=> (
-                              <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      {playerReportMode==='comparison' && (
-                        <div>
-                          <label className="text-sm font-medium">Comparison Player</label>
-                          <Select value={comparisonPlayer.name} onValueChange={(val)=>{ const p=mockPlayers.find(mp=>mp.name===val); if(p) setComparisonPlayer(p); }}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select player" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {mockPlayers.map((p)=> (
-                                <SelectItem key={p.id} value={p.name}>{p.name}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-
-                    {playerReportMode==='comparison' && (
-                      <label className="flex items-center gap-2 text-sm">
-                        <input type="checkbox" className="rounded" checked={includeComparison} onChange={(e)=>setIncludeComparison(e.target.checked)} />
-                        Include comparison (player vs player)
-                      </label>
-                    )}
-                  </div>
-
-                  <Button onClick={handleDownloadPlayerPDF} className="w-full">
-                    <Download className="w-4 h-4 mr-2" /> Download PDF
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Target className="w-5 h-5" />
-                    Team Performance PDF
-                  </CardTitle>
-                  <CardDescription>
-                    Export individual team, or compare two teams
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-xs text-gray-500">Source: Team Match</div>
-
-                  <div className="space-y-3">
-                    <div className="text-sm font-medium">Mode</div>
-                    <div className="flex items-center gap-4 text-sm">
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="team-mode" checked={teamReportMode==='individual'} onChange={()=>setTeamReportMode('individual')} />
-                        Individual
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" name="team-mode" checked={teamReportMode==='comparison'} onChange={()=>setTeamReportMode('comparison')} />
-                        Comparison
-                      </label>
-                    </div>
-
-                    {teamReportMode==='individual' ? (
-                      <div>
-                        <label className="text-sm font-medium">Team</label>
-                        <Select value={teamA !== 'all' ? teamA : (teamTeams.find(t=>t!=='all') || 'all')} onValueChange={setTeamA}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select team" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {teamTeams.filter((t)=>t !== 'all').map((t)=> (
-                              <SelectItem key={t} value={t}>{t}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    ) : (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                          <label className="text-sm font-medium">Team A</label>
-                          <Select value={teamA} onValueChange={setTeamA}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select team" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {teamTeams.filter((t)=>t !== 'all').map((t)=> (
-                                <SelectItem key={t} value={t}>{t}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <label className="text-sm font-medium">Team B</label>
-                          <Select value={teamB} onValueChange={setTeamB}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select team" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {teamTeams.filter((t)=>t !== 'all').map((t)=> (
-                                <SelectItem key={t} value={t}>{t}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    )}
-
-                    <label className="flex items-center gap-2 text-sm">
-                      <input type="checkbox" className="rounded" checked={includeMatches} onChange={(e)=>setIncludeMatches(e.target.checked)} />
-                      Include matches list
-                    </label>
-                  </div>
-
-                  <Button onClick={handleDownloadTeamPDF} className="w-full">
-                    <Download className="w-4 h-4 mr-2" /> Download PDF
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="w-5 h-5" />
-                    Crowd Monitor PDF
-                  </CardTitle>
-                  <CardDescription>
-                    Export current zones, timeline table and chart
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="text-sm text-gray-600">
-                    Sections: <span className="font-medium">{crowdZones.length}</span> • Total attendance: <span className="font-medium">{crowdZones.reduce((s,z)=>s+z.current,0).toLocaleString()}</span>
-                  </div>
-                  <div className="text-xs text-gray-500">Source: Crowd Monitor</div>
-                  <label className="flex items-center gap-2 text-sm">
-                    <input type="checkbox" className="rounded" checked={includeTimelineChart} onChange={(e)=>setIncludeTimelineChart(e.target.checked)} />
-                    Include timeline chart
-                  </label>
-                  <Button onClick={handleDownloadCrowdPDF} className="w-full">
-                    <Download className="w-4 h-4 mr-2" /> Download PDF
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+            <DownloadsPanel
+              players={mockPlayers}
+              teams={teamTeams.filter((t)=>t !== 'all')}
+              crowdZonesCount={crowdZones.length}
+              totalAttendance={crowdZones.reduce((s,z)=>s+z.current,0)}
+              onDownloadPlayer={({ mode, primary, comparison }) => {
+                const buildComparisonData = (p1: any, p2: any) => ([
+                  { stat: 'Kicks', [p1.name]: p1.kicks, [p2.name]: p2.kicks },
+                  { stat: 'Handballs', [p1.name]: p1.handballs, [p2.name]: p2.handballs },
+                  { stat: 'Marks', [p1.name]: p1.marks, [p2.name]: p2.marks },
+                  { stat: 'Tackles', [p1.name]: p1.tackles, [p2.name]: p2.tackles },
+                  { stat: 'Goals', [p1.name]: p1.goals, [p2.name]: p2.goals },
+                  { stat: 'Efficiency', [p1.name]: p1.efficiency, [p2.name]: p2.efficiency },
+                ]);
+                const html = buildPlayerPerformanceReportHTML({
+                  mode,
+                  selectedPlayer: primary,
+                  comparisonPlayer: mode==='comparison' ? comparison : null,
+                  comparisonData: mode==='comparison' && comparison ? buildComparisonData(primary, comparison) : null,
+                });
+                generateDashboardPDF(html);
+              }}
+              onDownloadTeam={({ mode, teamA, teamB, includeMatches }) => {
+                const teamsSel = (teamTeams.filter((t)=>t !== 'all'));
+                const a = teamA && teamsSel.includes(teamA) ? teamA : undefined;
+                const b = teamB && teamsSel.includes(teamB) ? teamB : undefined;
+                const filtered = includeMatches ? teamMatchesData.filter(m => {
+                  if (mode === 'individual') return (a && (m.teams.home === a || m.teams.away === a));
+                  return (a && (m.teams.home === a || m.teams.away === a)) || (b && (m.teams.home === b || m.teams.away === b));
+                }) : [];
+                const sumFor = (team?: string) => {
+                  if (!team) return { goals: 0, disposals: 0, marks: 0, tackles: 0, efficiency: 0, games: 0 };
+                  let goals=0, disposals=0, marks=0, tackles=0, efficiency=0, games=0;
+                  teamMatchesData.forEach(m => {
+                    if (m.teams.home === team) {
+                      goals += m.stats.home.goals; disposals += m.stats.home.disposals; marks += m.stats.home.marks; tackles += m.stats.home.tackles; efficiency += m.stats.home.efficiency; games += 1;
+                    } else if (m.teams.away === team) {
+                      goals += m.stats.away.goals; disposals += m.stats.away.disposals; marks += m.stats.away.marks; tackles += m.stats.away.tackles; efficiency += m.stats.away.efficiency; games += 1;
+                    }
+                  });
+                  return { goals, disposals, marks, tackles, efficiency: games? Math.round(efficiency/games):0, games };
+                };
+                const ta = sumFor(a); const tb = sumFor(b);
+                const teamCompareLocal = { a: ta, b: tb, aEff: ta.efficiency, bEff: tb.efficiency } as any;
+                const summaryLocal = {
+                  games: filtered.length,
+                  goals: filtered.reduce((s,m)=> s + m.stats.home.goals + m.stats.away.goals, 0),
+                  disposals: filtered.reduce((s,m)=> s + m.stats.home.disposals + m.stats.away.disposals, 0),
+                  inside50: filtered.reduce((s,m)=> s + m.stats.home.inside50 + m.stats.away.inside50, 0),
+                } as any;
+                const html = buildTeamPerformanceReportHTML({
+                  mode,
+                  teamA: a || '',
+                  teamB: b || '',
+                  singleTeam: mode==='individual' ? (a || b || '') : undefined,
+                  teamCompare: teamCompareLocal,
+                  summary: summaryLocal,
+                  matches: filtered,
+                });
+                generateDashboardPDF(html);
+              }}
+              onDownloadCrowd={({ includeTimeline }) => {
+                const timeline = generateTimelineFromStadiumData(crowdZones);
+                const html = buildCrowdMonitorReportHTML({ zones: crowdZones, timeline, includeTimeline });
+                generateDashboardPDF(html);
+              }}
+            />
           </TabsContent>
 
           {/* Video Analytics Input */}
