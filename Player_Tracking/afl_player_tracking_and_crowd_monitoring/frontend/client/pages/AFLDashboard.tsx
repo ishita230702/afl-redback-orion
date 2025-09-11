@@ -184,7 +184,16 @@ export default function AFLDashboard() {
   // Expanded card state
   const [expandedCardId, setExpandedCardId] = useState(null);
 
-  // Video upload & analysis state via hook
+  /* video analysis hook initialized after queue hook */
+
+  // Analysis view modal state
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedAnalysisItem, setSelectedAnalysisItem] = useState<any>(null);
+
+  // Processing Queue state and actions
+  const { processingQueue, setProcessingQueue, retryProcessing, removeFromQueue } = useProcessingQueue();
+
+  // Video upload & analysis state via hook (depends on setProcessingQueue)
   const {
     selectedVideoFile,
     isVideoUploading,
@@ -202,15 +211,6 @@ export default function AFLDashboard() {
     handleDownloadReport,
     handleDownloadVideoClips,
   } = useVideoAnalysis(setProcessingQueue);
-
-  // Analysis view modal state
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [selectedAnalysisItem, setSelectedAnalysisItem] = useState<any>(null);
-
-  // Processing Queue state and actions
-  const { processingQueue, setProcessingQueue, retryProcessing, removeFromQueue } = useProcessingQueue();
-
-
 
   // Generate dynamic chart data for analysis results
   const generateAnalysisChartData = (item: any) => {
