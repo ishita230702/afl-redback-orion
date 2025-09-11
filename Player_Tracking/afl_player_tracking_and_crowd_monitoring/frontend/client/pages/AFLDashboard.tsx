@@ -4,6 +4,7 @@ import TeamCompareBar from "@/components/dashboard/TeamCompareBar";
 import ProcessingQueueList from "@/components/dashboard/ProcessingQueueList";
 import VideoUploadPanel from "@/components/dashboard/VideoUploadPanel";
 import AnalysisResultsPanel from "@/components/dashboard/AnalysisResultsPanel";
+import VideoTab from "@/components/dashboard/tabs/VideoTab";
 // ReportsPanel removed; replaced with Downloads tab
 import TeamMatchFilters from "@/components/dashboard/TeamMatchFilters";
 import TeamMatchCompare from "@/components/dashboard/TeamMatchCompare";
