@@ -8,6 +8,12 @@ import ReportsPanel from "@/components/dashboard/ReportsPanel";
 import TeamMatchFilters from "@/components/dashboard/TeamMatchFilters";
 import TeamMatchCompare from "@/components/dashboard/TeamMatchCompare";
 import PlayerComparison from "@/components/dashboard/PlayerComparison";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import TeamSummaryCards from "@/components/dashboard/TeamSummaryCards";
+import MatchesList from "@/components/dashboard/MatchesList";
+import PlayerSearchFilters from "@/components/dashboard/PlayerSearchFilters";
+import PlayerStatsGrid from "@/components/dashboard/PlayerStatsGrid";
+import PlayerTradingCards from "@/components/dashboard/PlayerTradingCards";
 import type { QueueItem } from "@/types/dashboard";
 import { mockPlayers, matchEvents } from "@/lib/mock-data";
 import { generateTimelineFromStadiumData, getStaticAFLCrowdZones } from "@/lib/crowd";
@@ -970,7 +976,7 @@ Analysis Type: ${
               : "Crowd Reactions"
     }
 
-════════════════════�����═════════════��════════��═══════����══════
+══��═════════════════�����═════════════��════════��═══════����══════
 
 EXTRACTED VIDEO CLIPS WITH INSIGHTS
 ===================================
