@@ -680,7 +680,7 @@ export default function AFLDashboard() {
     }
   };
 
-  // Queue simulator moved to hook
+  useProcessingQueueSimulator(processingQueue, setProcessingQueue);
 
   // Check authentication on component mount
   useEffect(() => {
