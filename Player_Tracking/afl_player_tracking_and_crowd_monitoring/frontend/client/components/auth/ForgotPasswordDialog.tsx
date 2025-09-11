@@ -37,7 +37,7 @@ export default function ForgotPasswordDialog({
       setMessage(`Reset link sent to ${form.email}`);
       setStep(2);
     } else {
-      setError(res.message);
+      if ("message" in res) setError(res.message);
     }
     setIsLoading(false);
   };
