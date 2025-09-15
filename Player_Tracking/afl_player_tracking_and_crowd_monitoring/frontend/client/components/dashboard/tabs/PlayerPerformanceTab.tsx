@@ -6,8 +6,10 @@ import { Progress } from "@/components/ui/progress";
 import { BarChart3, Star, TrendingUp, Target, Users, Award, Activity } from "lucide-react";
 import PlayerSearchFilters from "../PlayerSearchFilters";
 import PlayerStatsGrid from "../PlayerStatsGrid";
-import PlayerTradingCards from "../PlayerTradingCards";
 import PlayerComparison from "../PlayerComparison";
+import PlayerCardFront from "@/components/PlayerCardFront";
+import PlayerCardBack from "@/components/PlayerCardBack";
+import { PossessionChart, MetricsChart } from "@/components/PlayerCharts";
 import type { Player } from "@/hooks/useDashboardState";
 
 interface PlayerPerformanceTabProps {
@@ -162,11 +164,38 @@ export default function PlayerPerformanceTab({
             </CardContent>
           </Card>
 
-          {/* Player Trading Cards */}
-          <PlayerTradingCards 
-            selectedPlayer={selectedPlayer}
-            onPlayerSelect={setSelectedPlayer}
-          />
+          {/* Player Cards and Analytics (friend's logic) */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Player Cards</CardTitle>
+              <CardDescription>Front and back visuals</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center">
+                <PlayerCardFront />
+                <PlayerCardBack />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Analytics</CardTitle>
+              <CardDescription>Possession and key metrics</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Possession Over Time</h3>
+                  <PossessionChart />
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Player Metrics</h3>
+                  <MetricsChart />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Player Comparison */}
           <PlayerComparison
