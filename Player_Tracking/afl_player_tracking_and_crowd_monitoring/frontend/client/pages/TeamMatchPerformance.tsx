@@ -40,8 +40,26 @@ const demoMatches = [
       away: "Richmond",
     },
     stats: {
-      home: { goals: 12, behinds: 8, disposals: 368, marks: 86, tackles: 57, clearances: 34, inside50: 55, efficiency: 76 },
-      away: { goals: 10, behinds: 11, disposals: 341, marks: 73, tackles: 62, clearances: 31, inside50: 49, efficiency: 72 },
+      home: {
+        goals: 12,
+        behinds: 8,
+        disposals: 368,
+        marks: 86,
+        tackles: 57,
+        clearances: 34,
+        inside50: 55,
+        efficiency: 76,
+      },
+      away: {
+        goals: 10,
+        behinds: 11,
+        disposals: 341,
+        marks: 73,
+        tackles: 62,
+        clearances: 31,
+        inside50: 49,
+        efficiency: 72,
+      },
     },
   },
   {
@@ -54,8 +72,26 @@ const demoMatches = [
       away: "Collingwood",
     },
     stats: {
-      home: { goals: 14, behinds: 7, disposals: 402, marks: 90, tackles: 51, clearances: 39, inside50: 61, efficiency: 79 },
-      away: { goals: 9, behinds: 12, disposals: 359, marks: 77, tackles: 66, clearances: 30, inside50: 47, efficiency: 71 },
+      home: {
+        goals: 14,
+        behinds: 7,
+        disposals: 402,
+        marks: 90,
+        tackles: 51,
+        clearances: 39,
+        inside50: 61,
+        efficiency: 79,
+      },
+      away: {
+        goals: 9,
+        behinds: 12,
+        disposals: 359,
+        marks: 77,
+        tackles: 66,
+        clearances: 30,
+        inside50: 47,
+        efficiency: 71,
+      },
     },
   },
   {
@@ -68,8 +104,26 @@ const demoMatches = [
       away: "Port Adelaide",
     },
     stats: {
-      home: { goals: 11, behinds: 13, disposals: 372, marks: 81, tackles: 64, clearances: 37, inside50: 58, efficiency: 73 },
-      away: { goals: 12, behinds: 10, disposals: 365, marks: 75, tackles: 59, clearances: 35, inside50: 54, efficiency: 75 },
+      home: {
+        goals: 11,
+        behinds: 13,
+        disposals: 372,
+        marks: 81,
+        tackles: 64,
+        clearances: 37,
+        inside50: 58,
+        efficiency: 73,
+      },
+      away: {
+        goals: 12,
+        behinds: 10,
+        disposals: 365,
+        marks: 75,
+        tackles: 59,
+        clearances: 35,
+        inside50: 54,
+        efficiency: 75,
+      },
     },
   },
 ];
@@ -80,10 +134,10 @@ export default function TeamMatchPerformance() {
   const [round, setRound] = useState("all");
   const [team, setTeam] = useState("all");
 
-  const rounds = useMemo(() => [
-    "all",
-    ...Array.from(new Set(demoMatches.map((m) => m.round))),
-  ], []);
+  const rounds = useMemo(
+    () => ["all", ...Array.from(new Set(demoMatches.map((m) => m.round)))],
+    [],
+  );
 
   const teams = useMemo(() => {
     const set = new Set<string>();
@@ -97,7 +151,8 @@ export default function TeamMatchPerformance() {
   const filtered = useMemo(() => {
     return demoMatches.filter((m) => {
       const matchesRound = round === "all" || m.round === round;
-      const matchesTeam = team === "all" || m.teams.home === team || m.teams.away === team;
+      const matchesTeam =
+        team === "all" || m.teams.home === team || m.teams.away === team;
       const hay = `${m.teams.home} ${m.teams.away} ${m.venue}`.toLowerCase();
       const q = search.trim().toLowerCase();
       return matchesRound && matchesTeam && (q === "" || hay.includes(q));
@@ -133,7 +188,17 @@ export default function TeamMatchPerformance() {
   const [teamB, setTeamB] = useState<string>("all");
 
   const calcTeamTotals = (teamName: string) => {
-    const base = { goals: 0, behinds: 0, disposals: 0, marks: 0, tackles: 0, clearances: 0, inside50: 0, efficiencySum: 0, efficiencyCount: 0 };
+    const base = {
+      goals: 0,
+      behinds: 0,
+      disposals: 0,
+      marks: 0,
+      tackles: 0,
+      clearances: 0,
+      inside50: 0,
+      efficiencySum: 0,
+      efficiencyCount: 0,
+    };
     if (!teamName || teamName === "all") return base;
     for (const m of demoMatches) {
       if (m.teams.home === teamName) {
@@ -165,15 +230,30 @@ export default function TeamMatchPerformance() {
   const compare = useMemo(() => {
     const a = calcTeamTotals(teamA);
     const b = calcTeamTotals(teamB);
-    const aEff = a.efficiencyCount ? Math.round(a.efficiencySum / a.efficiencyCount) : 0;
-    const bEff = b.efficiencyCount ? Math.round(b.efficiencySum / b.efficiencyCount) : 0;
+    const aEff = a.efficiencyCount
+      ? Math.round(a.efficiencySum / a.efficiencyCount)
+      : 0;
+    const bEff = b.efficiencyCount
+      ? Math.round(b.efficiencySum / b.efficiencyCount)
+      : 0;
     return { a, b, aEff, bEff };
   }, [teamA, teamB]);
 
-  const Metric = ({ label, value, suffix = "" }: { label: string; value: number; suffix?: string }) => (
+  const Metric = ({
+    label,
+    value,
+    suffix = "",
+  }: {
+    label: string;
+    value: number;
+    suffix?: string;
+  }) => (
     <div className="p-4 rounded-lg bg-white border">
       <div className="text-sm text-gray-600">{label}</div>
-      <div className="text-2xl font-semibold">{value.toLocaleString()}{suffix}</div>
+      <div className="text-2xl font-semibold">
+        {value.toLocaleString()}
+        {suffix}
+      </div>
     </div>
   );
 
@@ -201,19 +281,31 @@ export default function TeamMatchPerformance() {
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">{label}</span>
-          <span className="text-gray-600">{aValue} vs {bValue}</span>
+          <span className="text-gray-600">
+            {aValue} vs {bValue}
+          </span>
         </div>
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="w-28 text-xs text-blue-700 truncate">{aLabel}</span>
+            <span className="w-28 text-xs text-blue-700 truncate">
+              {aLabel}
+            </span>
             <div className="flex-1 bg-gray-200 rounded-full h-3">
-              <div className={`${colorA} h-3 rounded-full`} style={{ width: `${aPct}%` }} />
+              <div
+                className={`${colorA} h-3 rounded-full`}
+                style={{ width: `${aPct}%` }}
+              />
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-28 text-xs text-green-700 truncate">{bLabel}</span>
+            <span className="w-28 text-xs text-green-700 truncate">
+              {bLabel}
+            </span>
             <div className="flex-1 bg-gray-200 rounded-full h-3">
-              <div className={`${colorB} h-3 rounded-full`} style={{ width: `${bPct}%` }} />
+              <div
+                className={`${colorB} h-3 rounded-full`}
+                style={{ width: `${bPct}%` }}
+              />
             </div>
           </div>
         </div>
@@ -231,12 +323,18 @@ export default function TeamMatchPerformance() {
               <Activity className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900">AFL Analytics</h1>
-              <p className="text-sm text-gray-600">Team match performance overview</p>
+              <h1 className="text-lg font-semibold text-gray-900">
+                AFL Analytics
+              </h1>
+              <p className="text-sm text-gray-600">
+                Team match performance overview
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant="outline" className="hidden sm:flex">Updated now</Badge>
+            <Badge variant="outline" className="hidden sm:flex">
+              Updated now
+            </Badge>
           </div>
         </div>
       </header>
@@ -298,7 +396,9 @@ export default function TeamMatchPerformance() {
               <Target className="w-5 h-5" />
               Compare Teams
             </CardTitle>
-            <CardDescription>Select two teams to compare totals across listed matches</CardDescription>
+            <CardDescription>
+              Select two teams to compare totals across listed matches
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -308,9 +408,13 @@ export default function TeamMatchPerformance() {
                     <SelectValue placeholder="Team A" />
                   </SelectTrigger>
                   <SelectContent>
-                    {teams.filter(t=>t!=="all").map((t) => (
-                      <SelectItem key={t} value={t}>{t}</SelectItem>
-                    ))}
+                    {teams
+                      .filter((t) => t !== "all")
+                      .map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -320,27 +424,71 @@ export default function TeamMatchPerformance() {
                     <SelectValue placeholder="Team B" />
                   </SelectTrigger>
                   <SelectContent>
-                    {teams.filter(t=>t!=="all").map((t) => (
-                      <SelectItem key={t} value={t}>{t}</SelectItem>
-                    ))}
+                    {teams
+                      .filter((t) => t !== "all")
+                      .map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-center">
                 <Badge variant="outline" className="w-full justify-center">
-                  {teamA !== "all" && teamB !== "all" && teamA !== teamB ? "Ready" : "Select two different teams"}
+                  {teamA !== "all" && teamB !== "all" && teamA !== teamB
+                    ? "Ready"
+                    : "Select two different teams"}
                 </Badge>
               </div>
             </div>
 
             {teamA !== "all" && teamB !== "all" && teamA !== teamB && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <CompareBar label="Goals" aLabel={teamA} aValue={compare.a.goals} bLabel={teamB} bValue={compare.b.goals} />
-                <CompareBar label="Disposals" aLabel={teamA} aValue={compare.a.disposals} bLabel={teamB} bValue={compare.b.disposals} />
-                <CompareBar label="Marks" aLabel={teamA} aValue={compare.a.marks} bLabel={teamB} bValue={compare.b.marks} />
-                <CompareBar label="Tackles" aLabel={teamA} aValue={compare.a.tackles} bLabel={teamB} bValue={compare.b.tackles} />
-                <CompareBar label="Inside 50" aLabel={teamA} aValue={compare.a.inside50} bLabel={teamB} bValue={compare.b.inside50} />
-                <CompareBar label="Avg Efficiency %" aLabel={teamA} aValue={compare.aEff} bLabel={teamB} bValue={compare.bEff} colorA="bg-indigo-500" colorB="bg-emerald-600" />
+                <CompareBar
+                  label="Goals"
+                  aLabel={teamA}
+                  aValue={compare.a.goals}
+                  bLabel={teamB}
+                  bValue={compare.b.goals}
+                />
+                <CompareBar
+                  label="Disposals"
+                  aLabel={teamA}
+                  aValue={compare.a.disposals}
+                  bLabel={teamB}
+                  bValue={compare.b.disposals}
+                />
+                <CompareBar
+                  label="Marks"
+                  aLabel={teamA}
+                  aValue={compare.a.marks}
+                  bLabel={teamB}
+                  bValue={compare.b.marks}
+                />
+                <CompareBar
+                  label="Tackles"
+                  aLabel={teamA}
+                  aValue={compare.a.tackles}
+                  bLabel={teamB}
+                  bValue={compare.b.tackles}
+                />
+                <CompareBar
+                  label="Inside 50"
+                  aLabel={teamA}
+                  aValue={compare.a.inside50}
+                  bLabel={teamB}
+                  bValue={compare.b.inside50}
+                />
+                <CompareBar
+                  label="Avg Efficiency %"
+                  aLabel={teamA}
+                  aValue={compare.aEff}
+                  bLabel={teamB}
+                  bValue={compare.bEff}
+                  colorA="bg-indigo-500"
+                  colorB="bg-emerald-600"
+                />
               </div>
             )}
           </CardContent>
@@ -353,7 +501,13 @@ export default function TeamMatchPerformance() {
           const homePoints = m.stats.home.goals * 6 + m.stats.home.behinds;
           const awayPoints = m.stats.away.goals * 6 + m.stats.away.behinds;
           const homeWin = homePoints >= awayPoints;
-          const winPct = Math.min(100, Math.max(0, Math.round((homePoints / (homePoints + awayPoints || 1)) * 100)));
+          const winPct = Math.min(
+            100,
+            Math.max(
+              0,
+              Math.round((homePoints / (homePoints + awayPoints || 1)) * 100),
+            ),
+          );
 
           return (
             <Card key={m.id}>
@@ -380,11 +534,14 @@ export default function TeamMatchPerformance() {
                       {homePoints} - {awayPoints}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {m.stats.home.goals}.{m.stats.home.behinds} vs {m.stats.away.goals}.{m.stats.away.behinds}
+                      {m.stats.home.goals}.{m.stats.home.behinds} vs{" "}
+                      {m.stats.away.goals}.{m.stats.away.behinds}
                     </div>
                   </div>
                   <div className="md:col-span-2">
-                    <div className="text-sm text-gray-600 mb-1">Win Probability ({m.teams.home})</div>
+                    <div className="text-sm text-gray-600 mb-1">
+                      Win Probability ({m.teams.home})
+                    </div>
                     <Progress value={winPct} />
                   </div>
                 </div>
@@ -436,7 +593,6 @@ export default function TeamMatchPerformance() {
                     colorB="bg-emerald-600"
                   />
                 </div>
-
               </CardContent>
             </Card>
           );

@@ -1,15 +1,51 @@
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { Target, TrendingUp, Users, Calendar, MapPin, BarChart3 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  Target,
+  TrendingUp,
+  Users,
+  Calendar,
+  MapPin,
+  BarChart3,
+} from "lucide-react";
 import TeamMatchFilters from "../TeamMatchFilters";
 import TeamMatchCompare from "../TeamMatchCompare";
 import TeamSummaryCards from "../TeamSummaryCards";
 import MatchesList from "../MatchesList";
+import TeamsAnalytics from "@/components/TeamsAnalytics";
+import MatchReport from "@/components/MatchReport";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { TeamComparison } from "@/hooks/useDashboardState";
 
 interface TeamMatchTabProps {
@@ -29,14 +65,31 @@ export default function TeamMatchTab({
   teamCompare,
   teamTeams,
 }: TeamMatchTabProps) {
+  const [openReport, setOpenReport] = useState(false);
   // Mock data for team performance charts
   const teamPerformanceData = [
     { metric: "Goals", teamA: teamCompare.a.goals, teamB: teamCompare.b.goals },
-    { metric: "Disposals", teamA: teamCompare.a.disposals, teamB: teamCompare.b.disposals },
+    {
+      metric: "Disposals",
+      teamA: teamCompare.a.disposals,
+      teamB: teamCompare.b.disposals,
+    },
     { metric: "Marks", teamA: teamCompare.a.marks, teamB: teamCompare.b.marks },
-    { metric: "Tackles", teamA: teamCompare.a.tackles, teamB: teamCompare.b.tackles },
-    { metric: "Clearances", teamA: teamCompare.a.clearances, teamB: teamCompare.b.clearances },
-    { metric: "Inside 50s", teamA: teamCompare.a.inside50, teamB: teamCompare.b.inside50 },
+    {
+      metric: "Tackles",
+      teamA: teamCompare.a.tackles,
+      teamB: teamCompare.b.tackles,
+    },
+    {
+      metric: "Clearances",
+      teamA: teamCompare.a.clearances,
+      teamB: teamCompare.b.clearances,
+    },
+    {
+      metric: "Inside 50s",
+      teamA: teamCompare.a.inside50,
+      teamB: teamCompare.b.inside50,
+    },
   ];
 
   return (
@@ -48,9 +101,14 @@ export default function TeamMatchTab({
             <Target className="w-6 h-6" />
             Team Match Performance
           </h2>
-          <p className="text-gray-600">Compare team statistics and match performance</p>
+          <p className="text-gray-600">
+            Compare team statistics and match performance
+          </p>
         </div>
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+        <Badge
+          variant="outline"
+          className="bg-green-50 text-green-700 border-green-200"
+        >
           <TrendingUp className="w-3 h-3 mr-1" />
           Live Data
         </Badge>
@@ -151,14 +209,39 @@ export default function TeamMatchTab({
             <Calendar className="w-5 h-5" />
             Recent Matches
           </CardTitle>
-          <CardDescription>
-            Latest match results and statistics
-          </CardDescription>
+          <CardDescription>Latest match results and statistics</CardDescription>
         </CardHeader>
         <CardContent>
           <MatchesList />
         </CardContent>
       </Card>
+
+      {/* Teams Analytics (summary card + report button) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            Teams Analytics
+          </CardTitle>
+          <CardDescription>
+            High-level match snapshot with quick access to the full report
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <TeamsAnalytics onOpenReport={() => setOpenReport(true)} />
+        </CardContent>
+      </Card>
+
+      {/* Match Report Dialog */}
+      <Dialog open={openReport} onOpenChange={setOpenReport}>
+        <DialogContent className="max-w-5xl p-0 overflow-hidden">
+          <DialogHeader className="px-6 pt-6">
+            <DialogTitle>Match Report</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[80vh] overflow-auto">
+            <MatchReport />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Match Statistics */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -177,7 +260,9 @@ export default function TeamMatchTab({
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                 <div>
                   <p className="font-medium">MCG</p>
-                  <p className="text-sm text-gray-500">Melbourne Cricket Ground</p>
+                  <p className="text-sm text-gray-500">
+                    Melbourne Cricket Ground
+                  </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-green-600">W 8</p>

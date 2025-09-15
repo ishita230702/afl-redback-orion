@@ -1,9 +1,23 @@
 import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BarChart3, Star, TrendingUp, Target, Users, Award, Activity } from "lucide-react";
+import {
+  BarChart3,
+  Star,
+  TrendingUp,
+  Target,
+  Users,
+  Award,
+  Activity,
+} from "lucide-react";
 import PlayerSearchFilters from "../PlayerSearchFilters";
 import PlayerStatsGrid from "../PlayerStatsGrid";
 import PlayerComparison from "../PlayerComparison";
@@ -47,7 +61,9 @@ export default function PlayerPerformanceTab({
     goalAccuracy: selectedPlayer?.efficiency || 0,
     performanceRating: selectedPlayer?.rating || 0,
     seasonGames: 15, // Mock data
-    averageDisposals: Math.round((selectedPlayer?.kicks + selectedPlayer?.handballs || 0) * 0.9),
+    averageDisposals: Math.round(
+      (selectedPlayer?.kicks + selectedPlayer?.handballs || 0) * 0.9,
+    ),
     teamRank: Math.floor(Math.random() * 5) + 1, // Mock ranking
   };
 
@@ -60,9 +76,14 @@ export default function PlayerPerformanceTab({
             <BarChart3 className="w-6 h-6" />
             Player Performance
           </h2>
-          <p className="text-gray-600">Real-time player statistics and performance insights</p>
+          <p className="text-gray-600">
+            Real-time player statistics and performance insights
+          </p>
         </div>
-        <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+        <Badge
+          variant="outline"
+          className="bg-green-50 text-green-700 border-green-200"
+        >
           <TrendingUp className="w-3 h-3 mr-1" />
           Live Data
         </Badge>
@@ -74,8 +95,12 @@ export default function PlayerPerformanceTab({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Disposals</p>
-                <p className="text-2xl font-bold text-purple-600">{playerMetrics.totalDisposals}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Total Disposals
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {playerMetrics.totalDisposals}
+                </p>
                 <p className="text-xs text-gray-500">This Season</p>
               </div>
               <div className="p-3 bg-purple-100 rounded-full">
@@ -89,8 +114,12 @@ export default function PlayerPerformanceTab({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Goal Accuracy</p>
-                <p className="text-2xl font-bold text-green-600">{playerMetrics.goalAccuracy}%</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Goal Accuracy
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {playerMetrics.goalAccuracy}%
+                </p>
                 <p className="text-xs text-gray-500">Efficiency Rate</p>
               </div>
               <div className="p-3 bg-green-100 rounded-full">
@@ -104,8 +133,12 @@ export default function PlayerPerformanceTab({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Performance Rating</p>
-                <p className="text-2xl font-bold text-orange-600">{playerMetrics.performanceRating}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Performance Rating
+                </p>
+                <p className="text-2xl font-bold text-orange-600">
+                  {playerMetrics.performanceRating}
+                </p>
                 <p className="text-xs text-gray-500">Out of 5.0</p>
               </div>
               <div className="p-3 bg-orange-100 rounded-full">
@@ -119,8 +152,12 @@ export default function PlayerPerformanceTab({
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Team Ranking</p>
-                <p className="text-2xl font-bold text-blue-600">#{playerMetrics.teamRank}</p>
+                <p className="text-sm font-medium text-gray-600">
+                  Team Ranking
+                </p>
+                <p className="text-2xl font-bold text-blue-600">
+                  #{playerMetrics.teamRank}
+                </p>
                 <p className="text-xs text-gray-500">In Team</p>
               </div>
               <div className="p-3 bg-blue-100 rounded-full">
@@ -152,15 +189,23 @@ export default function PlayerPerformanceTab({
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Player Statistics - {selectedPlayer?.name || 'No Player Selected'}</span>
-                <Badge variant="outline">{selectedPlayer?.team || 'Unknown'}</Badge>
+                <span>
+                  Player Statistics -{" "}
+                  {selectedPlayer?.name || "No Player Selected"}
+                </span>
+                <Badge variant="outline">
+                  {selectedPlayer?.team || "Unknown"}
+                </Badge>
               </CardTitle>
               <CardDescription>
                 Current season performance metrics and trends
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <PlayerStatsGrid selectedPlayer={selectedPlayer} performanceTrendData={performanceTrendData} />
+              <PlayerStatsGrid
+                selectedPlayer={selectedPlayer}
+                performanceTrendData={performanceTrendData}
+              />
             </CardContent>
           </Card>
 
@@ -186,7 +231,9 @@ export default function PlayerPerformanceTab({
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-sm font-medium mb-2">Possession Over Time</h3>
+                  <h3 className="text-sm font-medium mb-2">
+                    Possession Over Time
+                  </h3>
                   <PossessionChart />
                 </div>
                 <div>
