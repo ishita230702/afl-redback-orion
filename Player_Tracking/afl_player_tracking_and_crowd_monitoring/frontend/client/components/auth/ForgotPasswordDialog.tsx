@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Mail, Lock, ArrowLeft, CheckCircle } from "lucide-react";
-import { sendResetEmail, verifyResetCode, resetPassword, RESET_DEMO_CODE } from "@/lib/auth";
+import { sendResetEmail, verifyResetCode, resetPassword} from "@/lib/auth";
 
 export default function ForgotPasswordDialog({
   open,
@@ -153,9 +153,6 @@ export default function ForgotPasswordDialog({
                   maxLength={6}
                   required
                 />
-                <p className="text-xs text-gray-600">
-                  For demo purposes, use code: <strong>{RESET_DEMO_CODE}</strong>
-                </p>
               </div>
               <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-orange-600" disabled={isLoading}>
                 {isLoading ? (

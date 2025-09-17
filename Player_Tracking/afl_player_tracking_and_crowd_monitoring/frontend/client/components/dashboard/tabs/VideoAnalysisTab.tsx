@@ -1,11 +1,12 @@
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Video, Upload, Zap, FileText, Download } from "lucide-react";
-import VideoUploadPanel from "../VideoUploadPanel";
-import AnalysisResultsPanel from "../AnalysisResultsPanel";
-import ProcessingQueueList from "../ProcessingQueueList";
-import QueueStatusIcon from "../QueueStatusIcon";
+import React, { useState } from "react";
+import { deleteUpload } from "@/lib/video"; // ✅ API call
+
+interface CompletedAnalysis {
+  id: string;
+  original_filename: string;
+  created_at: string;
+  status: string; // "Analyzing..." | "Completed" | "Failed"
+}
 
 interface VideoAnalysisTabProps {
   selectedVideoFile: File | null;
@@ -13,21 +14,12 @@ interface VideoAnalysisTabProps {
   isVideoUploading: boolean;
   videoUploadProgress: number;
   isVideoAnalyzing: boolean;
-  videoAnalysisProgress: number;
-  selectedAnalysisType: string;
-  setSelectedAnalysisType: (type: string) => void;
-  selectedFocusAreas: string[];
-  onFocusAreaChange: (area: string, checked: boolean) => void;
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onStart: () => void;
-  disabledStart: boolean;
-  videoAnalysisComplete: boolean;
-  selectedVideoFileName: string;
-  onDownloadVideoClips: () => void;
-  onDownloadReport: () => void;
-  processingQueue: any[];
-  onRetryProcessing: (id: string) => void;
-  onCancelProcessing: (id: string) => void;
+  onAnalyze: (file: File, runPlayer: boolean, runCrowd: boolean) => void;
+  completedAnalyses: CompletedAnalysis[];
+  setCompletedAnalyses: React.Dispatch<React.SetStateAction<CompletedAnalysis[]>>;
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedUploadId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 export default function VideoAnalysisTab({
@@ -36,171 +28,155 @@ export default function VideoAnalysisTab({
   isVideoUploading,
   videoUploadProgress,
   isVideoAnalyzing,
-  videoAnalysisProgress,
-  selectedAnalysisType,
-  setSelectedAnalysisType,
-  selectedFocusAreas,
-  onFocusAreaChange,
   onFileSelect,
-  onStart,
-  disabledStart,
-  videoAnalysisComplete,
-  selectedVideoFileName,
-  onDownloadVideoClips,
-  onDownloadReport,
-  processingQueue,
-  onRetryProcessing,
-  onCancelProcessing,
+  onAnalyze,
+  completedAnalyses,
+  setCompletedAnalyses,
+  setActiveTab,
+  setSelectedUploadId,
 }: VideoAnalysisTabProps) {
+  const [runPlayer, setRunPlayer] = useState(true);
+  const [runCrowd, setRunCrowd] = useState(false);
+
+  const isDisabled = !selectedVideoFile || isVideoUploading || isVideoAnalyzing;
+
+  const getStatusColor = (status: string) => {
+    if (status.includes("Analyzing")) return "text-amber-600";
+    if (status.includes("Failed")) return "text-red-600";
+    return "text-green-600";
+  };
+
+  const handleDelete = async (uploadId: string) => {
+    if (!window.confirm("Are you sure you want to delete this video?")) return;
+    try {
+      await deleteUpload(uploadId);
+      setCompletedAnalyses((prev) => prev.filter((item) => item.id !== uploadId));
+    } catch (err) {
+      console.error("❌ Failed to delete upload:", err);
+      alert("Failed to delete video.");
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Video className="w-6 h-6" />
-            Video Analysis
-          </h2>
-          <p className="text-gray-600">AI-powered video analysis and insights generation</p>
+    <div className="p-4 space-y-6">
+      {/* File input */}
+      <div className="space-y-2">
+        <input
+          type="file"
+          accept="video/*"
+          onChange={onFileSelect}
+          className="block w-full text-sm text-gray-700"
+        />
+
+        {/* ✅ Checklist for services */}
+        <div className="flex flex-col space-y-2 mt-2">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={runPlayer}
+              onChange={(e) => setRunPlayer(e.target.checked)}
+            />
+            Run Player Tracking
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={runCrowd}
+              onChange={(e) => setRunCrowd(e.target.checked)}
+            />
+            Run Crowd Analysis
+          </label>
         </div>
-        <div className="flex items-center gap-2">
-          <QueueStatusIcon queue={processingQueue} />
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            <Zap className="w-3 h-3 mr-1" />
-            AI Powered
-          </Badge>
-        </div>
+
+        <button
+          onClick={() =>
+            selectedVideoFile && onAnalyze(selectedVideoFile, runPlayer, runCrowd)
+          }
+          disabled={isDisabled}
+          className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+        >
+          {isVideoUploading || isVideoAnalyzing ? "Analyzing..." : "Analyze"}
+        </button>
+
+        {isVideoUploading && (
+          <p className="text-sm text-gray-500">
+            Uploading... {videoUploadProgress}%
+          </p>
+        )}
+        {videoAnalysisError && (
+          <p className="text-sm text-red-500">{videoAnalysisError}</p>
+        )}
       </div>
 
-      {/* Processing Queue */}
-      {processingQueue.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Processing Queue
-            </CardTitle>
-            <CardDescription>
-              Current video analysis tasks
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ProcessingQueueList
-              queue={processingQueue}
-              onRetry={onRetryProcessing}
-              onCancel={onCancelProcessing}
-            />
-          </CardContent>
-        </Card>
-      )}
+      {/* ✅ Analysis Completed Section (disabled while analyzing) */}
+      <div
+        className={`transition-opacity space-y-2 ${
+          isVideoAnalyzing ? "opacity-50 pointer-events-none" : ""
+        }`}
+      >
+        <h3 className="text-lg font-semibold">Analysis Completed</h3>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Video Upload Panel */}
-        <div className="space-y-6">
-          <VideoUploadPanel
-            selectedVideoFile={selectedVideoFile}
-            videoAnalysisError={videoAnalysisError}
-            isVideoUploading={isVideoUploading}
-            videoUploadProgress={videoUploadProgress}
-            isVideoAnalyzing={isVideoAnalyzing}
-            videoAnalysisProgress={videoAnalysisProgress}
-            selectedAnalysisType={selectedAnalysisType}
-            setSelectedAnalysisType={setSelectedAnalysisType}
-            selectedFocusAreas={selectedFocusAreas}
-            onFocusAreaChange={onFocusAreaChange}
-            onFileSelect={onFileSelect}
-            onStart={onStart}
-            disabledStart={disabledStart}
-          />
+        {/* 🔹 Banner shown only while analyzing */}
+        {isVideoAnalyzing && (
+          <div className="p-3 bg-yellow-100 text-yellow-800 text-sm rounded border border-yellow-300">
+            ⏳ Analysis is in progress… Please wait until it finishes before accessing results.
+          </div>
+        )}
 
-          {/* Analysis Types Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Analysis Types</CardTitle>
-              <CardDescription>
-                Choose the type of analysis you want to perform
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2" />
-                  <div>
-                    <h4 className="font-medium text-blue-900">Highlights</h4>
-                    <p className="text-sm text-blue-700">Extract key moments and highlights from the video</p>
-                  </div>
+        {completedAnalyses.length === 0 ? (
+          <p className="text-sm text-gray-500">No analyses yet.</p>
+        ) : (
+          <div className="space-y-2 mt-3">
+            {completedAnalyses.map((video) => (
+              <div
+                key={video.id}
+                className="flex items-center justify-between p-2 border rounded"
+              >
+                <div className="truncate max-w-xs">
+                  <span className="font-medium truncate block">
+                    {video.original_filename}
+                  </span>
+                  <p className="text-xs text-gray-500">
+                    Uploaded: {new Date(video.created_at).toLocaleString()}
+                  </p>
+                  <p
+                    className={`text-xs font-semibold ${getStatusColor(video.status)}`}
+                  >
+                    Status: {video.status}
+                  </p>
                 </div>
-                <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2" />
-                  <div>
-                    <h4 className="font-medium text-green-900">Player Tracking</h4>
-                    <p className="text-sm text-green-700">Track individual player movements and statistics</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 bg-purple-50 rounded-lg">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2" />
-                  <div>
-                    <h4 className="font-medium text-purple-900">Crowd Analysis</h4>
-                    <p className="text-sm text-purple-700">Analyze crowd behavior and density patterns</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 p-3 bg-orange-50 rounded-lg">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2" />
-                  <div>
-                    <h4 className="font-medium text-orange-900">Tactical Analysis</h4>
-                    <p className="text-sm text-orange-700">Analyze team formations and tactical patterns</p>
-                  </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedUploadId(video.id);
+                      setActiveTab("performance");
+                    }}
+                    disabled={video.status !== "Completed"}
+                    className="px-2 py-1 bg-green-500 text-white rounded disabled:bg-gray-300"
+                  >
+                    Player Performance
+                  </button>
+                  <button
+                    onClick={() => {
+                      setSelectedUploadId(video.id);
+                      setActiveTab("crowd");
+                    }}
+                    disabled={video.status !== "Completed"}
+                    className="px-2 py-1 bg-purple-500 text-white rounded disabled:bg-gray-300"
+                  >
+                    Crowd Monitor
+                  </button>
+                  <button
+                    onClick={() => handleDelete(video.id)}
+                    className="px-2 py-1 bg-red-500 text-white rounded"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Analysis Results */}
-        <div className="space-y-6">
-          <AnalysisResultsPanel
-            videoAnalysisComplete={videoAnalysisComplete}
-            selectedAnalysisType={selectedAnalysisType}
-            selectedVideoFileName={selectedVideoFileName}
-            selectedFocusAreas={selectedFocusAreas}
-            onDownloadVideoClips={onDownloadVideoClips}
-            onDownloadReport={onDownloadReport}
-          />
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-              <CardDescription>
-                Common video analysis tasks
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-3">
-                <button className="p-3 text-left border rounded-lg hover:bg-gray-50 transition-colors">
-                  <Upload className="w-5 h-5 text-blue-600 mb-2" />
-                  <h4 className="font-medium text-sm">Upload New Video</h4>
-                  <p className="text-xs text-gray-500">Start a new analysis</p>
-                </button>
-                <button className="p-3 text-left border rounded-lg hover:bg-gray-50 transition-colors">
-                  <Download className="w-5 h-5 text-green-600 mb-2" />
-                  <h4 className="font-medium text-sm">Download Results</h4>
-                  <p className="text-xs text-gray-500">Get analysis reports</p>
-                </button>
-                <button className="p-3 text-left border rounded-lg hover:bg-gray-50 transition-colors">
-                  <FileText className="w-5 h-5 text-purple-600 mb-2" />
-                  <h4 className="font-medium text-sm">View History</h4>
-                  <p className="text-xs text-gray-500">Previous analyses</p>
-                </button>
-                <button className="p-3 text-left border rounded-lg hover:bg-gray-50 transition-colors">
-                  <Zap className="w-5 h-5 text-orange-600 mb-2" />
-                  <h4 className="font-medium text-sm">Batch Process</h4>
-                  <p className="text-xs text-gray-500">Multiple videos</p>
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

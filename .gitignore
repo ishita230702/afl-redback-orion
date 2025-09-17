@@ -1,0 +1,29 @@
+# Node
+node_modules/
+.vite/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+
+# Python virtual environments
+venv/
+venv*/
+*/venv*/
+*/venv310/
+
+# Env
+.env
+
+# Generated data/outputs
+backend/data/
+backend/analytics/
+backend/uploads/
+backend/heatmaps/
+
+# OS junk
+*.log
+*.DS_Store
+Thumbs.db

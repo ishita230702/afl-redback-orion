@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, Users, Download, Target, Video } from "lucide-react";
@@ -9,105 +9,67 @@ import VideoAnalysisTab from "@/components/dashboard/tabs/VideoAnalysisTab";
 import TeamMatchTab from "@/components/dashboard/tabs/TeamMatchTab";
 import ReportsTab from "@/components/dashboard/tabs/ReportsTab";
 import { useDashboardState } from "@/hooks/useDashboardState";
+import { listUploads } from "@/lib/video";
 
 export default function AFLDashboard() {
   const navigate = useNavigate();
   const dashboardState = useDashboardState();
 
-  const handleLogout = () => {
-    // Clear any stored authentication data
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userEmail');
-    navigate('/login');
-  };
+  // 🔹 Track active tab
+  const [activeTab, setActiveTab] = useState("video");
 
-  // Video analysis handlers
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      dashboardState.setSelectedVideoFile(file);
-    }
-  };
+  // 🔹 Track which upload is selected
+  const [selectedUploadId, setSelectedUploadId] = useState<string | null>(null);
 
-  const handleFocusAreaChange = (area: string, checked: boolean) => {
-    if (checked) {
-      dashboardState.setSelectedFocusAreas([...dashboardState.selectedFocusAreas, area]);
-    } else {
-      dashboardState.setSelectedFocusAreas(
-        dashboardState.selectedFocusAreas.filter(a => a !== area)
-      );
-    }
-  };
+  // 🔹 Derived: full selected upload object
+  const selectedUpload =
+    dashboardState.completedAnalyses.find((u) => u.id === selectedUploadId) ||
+    null;
 
-  const handleStartAnalysis = () => {
-    if (!dashboardState.selectedVideoFile) return;
-    
-    // Simulate video upload and analysis
-    dashboardState.setIsVideoUploading(true);
-    dashboardState.setVideoUploadProgress(0);
-    
-    const uploadInterval = setInterval(() => {
-      dashboardState.setVideoUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(uploadInterval);
-          dashboardState.setIsVideoUploading(false);
-          dashboardState.setIsVideoAnalyzing(true);
-          dashboardState.setVideoAnalysisProgress(0);
-          
-          // Start analysis simulation
-          const analysisInterval = setInterval(() => {
-            dashboardState.setVideoAnalysisProgress(prev => {
-              if (prev >= 100) {
-                clearInterval(analysisInterval);
-                dashboardState.setIsVideoAnalyzing(false);
-                dashboardState.setVideoAnalysisComplete(true);
-                return 100;
-              }
-              return prev + 10;
-            });
-          }, 500);
-          
-          return 100;
+  // -------------------------------
+  // Fetch past uploads → mark as completed
+  // -------------------------------
+  useEffect(() => {
+    async function fetchUploads() {
+      try {
+        const uploads = await listUploads();
+        dashboardState.setCompletedAnalyses(
+          uploads.map((u: any) => ({
+            id: u.id,
+            original_filename: u.original_filename,
+            created_at: u.created_at,
+            status: "Completed",
+          }))
+        );
+
+        // Auto-select the first upload if exists
+        if (uploads.length > 0 && !selectedUploadId) {
+          setSelectedUploadId(uploads[0].id);
         }
-        return prev + 10;
-      });
-    }, 200);
-  };
+      } catch (err) {
+        console.error("⚠️ Failed to fetch uploads:", err);
+      }
+    }
+    fetchUploads();
+  }, []);
 
-  const handleDownloadVideoClips = () => {
-    // Implement video clips download
-    console.log('Downloading video clips...');
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userEmail");
+    navigate("/login");
   };
-
-  const handleDownloadReport = () => {
-    // Implement report download
-    console.log('Downloading report...');
-  };
-
-  const handleRetryProcessing = (id: string) => {
-    // Implement retry logic
-    console.log('Retrying processing for:', id);
-  };
-
-  const handleCancelProcessing = (id: string) => {
-    // Implement cancel logic
-    console.log('Cancelling processing for:', id);
-  };
-
-  const disabledStart = !dashboardState.selectedVideoFile || 
-                       dashboardState.isVideoUploading || 
-                       dashboardState.isVideoAnalyzing;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-orange-50">
-      <DashboardHeader 
-        isLive={dashboardState.isLive} 
-        userEmail={dashboardState.userEmail} 
-        onLogout={handleLogout} 
+      <DashboardHeader
+        isLive={dashboardState.isLive}
+        userEmail={dashboardState.userEmail}
+        onLogout={handleLogout}
       />
 
       <div className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="performance" className="space-y-6">
+        {/* 🔹 Controlled Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="performance" className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4" />
@@ -132,24 +94,11 @@ export default function AFLDashboard() {
           </TabsList>
 
           <TabsContent value="performance">
-            <PlayerPerformanceTab
-              selectedPlayer={dashboardState.selectedPlayer}
-              setSelectedPlayer={dashboardState.setSelectedPlayer}
-              comparisonPlayer={dashboardState.comparisonPlayer}
-              setComparisonPlayer={dashboardState.setComparisonPlayer}
-              searchTerm={dashboardState.searchTerm}
-              setSearchTerm={dashboardState.setSearchTerm}
-              selectedTeam={dashboardState.selectedTeam}
-              setSelectedTeam={dashboardState.setSelectedTeam}
-              filteredPlayers={dashboardState.filteredPlayers}
-              availableTeams={dashboardState.availableTeams}
-              performanceTrendData={dashboardState.performanceTrendData}
-              playerComparisonData={dashboardState.playerComparisonData}
-            />
+            <PlayerPerformanceTab upload={selectedUpload} />
           </TabsContent>
 
           <TabsContent value="crowd">
-            <CrowdMonitorTab />
+            <CrowdMonitorTab upload={selectedUpload} />
           </TabsContent>
 
           <TabsContent value="reports">
@@ -174,21 +123,18 @@ export default function AFLDashboard() {
               isVideoUploading={dashboardState.isVideoUploading}
               videoUploadProgress={dashboardState.videoUploadProgress}
               isVideoAnalyzing={dashboardState.isVideoAnalyzing}
-              videoAnalysisProgress={dashboardState.videoAnalysisProgress}
-              selectedAnalysisType={dashboardState.selectedAnalysisType}
-              setSelectedAnalysisType={dashboardState.setSelectedAnalysisType}
-              selectedFocusAreas={dashboardState.selectedFocusAreas}
-              onFocusAreaChange={handleFocusAreaChange}
-              onFileSelect={handleFileSelect}
-              onStart={handleStartAnalysis}
-              disabledStart={disabledStart}
-              videoAnalysisComplete={dashboardState.videoAnalysisComplete}
-              selectedVideoFileName={dashboardState.selectedVideoFile?.name || ''}
-              onDownloadVideoClips={handleDownloadVideoClips}
-              onDownloadReport={handleDownloadReport}
-              processingQueue={dashboardState.processingQueue}
-              onRetryProcessing={handleRetryProcessing}
-              onCancelProcessing={handleCancelProcessing}
+              onFileSelect={(e) => {
+                const file = e.target.files?.[0];
+                if (file) dashboardState.setSelectedVideoFile(file);
+              }}
+              onAnalyze={(file, runPlayer, runCrowd) =>
+                dashboardState.handleAnalyze(file, runPlayer, runCrowd)
+              }
+
+              completedAnalyses={dashboardState.completedAnalyses}
+              setCompletedAnalyses={dashboardState.setCompletedAnalyses}
+              setActiveTab={setActiveTab} // ✅ switch tab
+              setSelectedUploadId={setSelectedUploadId} // ✅ choose video
             />
           </TabsContent>
         </Tabs>

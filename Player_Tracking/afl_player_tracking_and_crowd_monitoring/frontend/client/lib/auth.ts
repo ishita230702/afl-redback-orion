@@ -1,3 +1,5 @@
+import API from "../api/axiosInstance";
+
 export type LoginParams = { email: string; password: string };
 export type SignupParams = {
   firstName: string;
@@ -8,89 +10,79 @@ export type SignupParams = {
   role: string;
 };
 
-export type AuthResult = { success: true } | { success: false; message: string };
+export type AuthResult =
+  | { success: true; access_token: string; token_type: string }
+  | { success: false; message: string };
 
-const DEMO_USERS: { email: string; password: string }[] = [
-  { email: "demo@aflanalytics.com", password: "demo123" },
-  { email: "admin@aflanalytics.com", password: "admin123" },
-  { email: "coach@aflanalytics.com", password: "coach123" },
-  { email: "analyst@aflanalytics.com", password: "analyst123" },
-];
-
-const STORAGE_KEY = "registeredUsers";
-export const RESET_DEMO_CODE = "123456";
-
-function readUsers(): any[] {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function writeUsers(users: any[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-}
-
+// -------------------------------
+// Login (POST /api/v1/auth/login)
+// -------------------------------
 export async function loginWithEmail(params: LoginParams): Promise<AuthResult> {
-  await delay(1500);
   const { email, password } = params;
-  if (!email || !password) return { success: false, message: "Please enter both email and password" };
 
-  const users = [...DEMO_USERS, ...readUsers()];
-  const match = users.some(
-    (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password,
-  );
+  try {
+    // Backend expects form-data: username, password
+    const formData = new URLSearchParams();
+    formData.append("username", email);
+    formData.append("password", password);
 
-  if (!match) {
+    const res = await API.post("/auth/login", formData, {
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    });
+
+    // Save token for future requests
+    localStorage.setItem("token", res.data.access_token);
+     // ✅ Save email for UI
+    localStorage.setItem("userEmail", email);
+
+    return { success: true, ...res.data };
+  } catch (err: any) {
     return {
       success: false,
-      message:
-        "Invalid email or password. Try demo@aflanalytics.com / demo123 or use your signup credentials",
+      message: err.response?.data?.detail || "Login failed",
     };
   }
-
-  return { success: true };
 }
 
+// -------------------------------
+// Signup (POST /api/v1/auth/register)
+// -------------------------------
 export async function signupWithEmail(params: SignupParams): Promise<AuthResult> {
-  await delay(2000);
-  const { firstName, lastName, email, password, organization, role } = params;
+  const { email, password } = params;
 
-  if (!firstName || !lastName || !email || !password || !organization) {
-    return { success: false, message: "Please fill all required fields" };
+  try {
+    const res = await API.post("/auth/register", { email, password });
+
+    // Save token for future requests
+    localStorage.setItem("token", res.data.access_token);
+     // ✅ Save email for UI
+    localStorage.setItem("userEmail", email);
+
+    return { success: true, ...res.data };
+  } catch (err: any) {
+    return {
+      success: false,
+      message: err.response?.data?.detail || "Signup failed",
+    };
   }
-
-  const existing = readUsers();
-  const exists = existing.some((u) => u.email.toLowerCase() === email.toLowerCase());
-  if (exists) {
-    return { success: false, message: "An account with this email already exists. Please login instead." };
-  }
-
-  existing.push({ email, password, firstName, lastName, organization, role });
-  writeUsers(existing);
-  return { success: true };
 }
 
+// -------------------------------
+// Password reset (stubs for now)
+// -------------------------------
 export async function sendResetEmail(email: string): Promise<AuthResult> {
-  await delay(1500);
-  if (!email) return { success: false, message: "Please enter a valid email address" };
-  return { success: true };
+  return { success: true, access_token: "", token_type: "bearer" };
 }
 
 export async function verifyResetCode(code: string): Promise<AuthResult> {
-  await delay(1000);
-  return code === RESET_DEMO_CODE
-    ? { success: true }
-    : { success: false, message: "Invalid verification code. Try '123456' for demo." };
+  return code === "123456"
+    ? { success: true, access_token: "", token_type: "bearer" }
+    : { success: false, message: "Invalid verification code" };
 }
 
 export async function resetPassword(newPassword: string, confirm: string): Promise<AuthResult> {
-  await delay(1500);
-  if (newPassword !== confirm) return { success: false, message: "Passwords do not match" };
-  return { success: true };
-}
-
-function delay(ms: number) {
-  return new Promise((res) => setTimeout(res, ms));
+  if (newPassword !== confirm) {
+    return { success: false, message: "Passwords do not match" };
+  }
+  return { success: true, access_token: "", token_type: "bearer" };
 }
