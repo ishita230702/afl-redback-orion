@@ -1,6 +1,6 @@
 # Frontend Setup and Onboarding Guide
 
-This guide explains how to set up, run, understand, and extend the AFL Player Tracking & Crowd Monitoring frontend. It is designed for juniors and future maintainers.
+This guide explains how to set up, run, understand, and extend the AFL Player Tracking & Crowd Monitoring frontend. It is designed for  future maintainers.
 
 - Tech: React 18, TypeScript, Vite 7, TailwindCSS 3, Radix UI, Express (integrated for APIs in dev and prod), TanStack Query, Vitest
 - App location: `Player_Tracking/afl_player_tracking_and_crowd_monitoring/frontend`
