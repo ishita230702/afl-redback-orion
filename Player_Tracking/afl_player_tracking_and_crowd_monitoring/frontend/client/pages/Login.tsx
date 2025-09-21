@@ -129,23 +129,23 @@ export default function Login() {
       {/* Header */}
       <HeaderBrand />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 md:px-6 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 items-center">
             <AuthHero onLoadDemo={demoLogin} />
 
             {/* Right side - Login/Signup Form */}
             <div className="w-full max-w-md mx-auto">
-              <Card className="shadow-lg">
-                <CardHeader className="text-center">
+              <Card className="shadow-lg border rounded-xl backdrop-blur-sm bg-white/90">
+                <CardHeader className="text-center space-y-1">
                   <CardTitle className="text-2xl">Welcome Back</CardTitle>
                   <CardDescription>
                     Sign in to access your AFL analytics dashboard
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="pt-2">
                   <Tabs defaultValue="login" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
+                    <TabsList className="grid w-full grid-cols-2 rounded-md">
                       <TabsTrigger value="login">Sign In</TabsTrigger>
                       <TabsTrigger value="signup">Sign Up</TabsTrigger>
                     </TabsList>
