@@ -60,7 +60,7 @@ APPLE_TEAM_ID=
 APPLE_KEY_ID=
 APPLE_PRIVATE_KEY=
 ```
-Do not commit real secrets. In Builder.io projects, prefer setting env vars via the platform (Dev Server environment) rather than writing to .env files.
+Do not commit real secrets. Use environment variables locally via a `.env` file and configure secrets in your deployment environment.
 
 OAuth details are documented in `OAUTH_SETUP.md`.
 
@@ -156,16 +156,7 @@ Suggested conventions:
 - `pnpm start` serves both via Express
 
 Deployment options:
-- Netlify/Vercel or your own Node server. For Builder.io MCP integrations you can:
-  - Netlify: easy hosting/CDN. Connect via the platform’s MCP panel.
-  - Sentry: error monitoring of frontend and server.
-  - Builder CMS: content models and assets.
-  - Neon / Supabase / Prisma Postgres: data services if you add DB features.
-  - Zapier: workflows/automation.
-  - Linear / Notion: project documentation and tracking.
-  - Context7: docs lookup during development.
-
-In Builder.io, connect integrations via the MCP popover and set environment variables in the Dev Server environment (never commit secrets).
+- Host on any Node-capable environment or platform (e.g., your VM, Docker, popular PaaS). Configure environment variables in that environment and run `pnpm start`.
 
 ## 11) Troubleshooting (Common Issues)
 - Install fails at repo root: run commands inside `frontend/` (this app’s package.json lives here)

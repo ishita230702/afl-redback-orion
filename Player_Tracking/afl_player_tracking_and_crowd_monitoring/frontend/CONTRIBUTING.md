@@ -147,25 +147,15 @@ describe("formatNumber", () => {
 - Validate inputs server-side; sanitize any user-facing content.
 - Keep dependencies reasonably up to date.
 
-## Git & PR Workflow (Builder.io)
+## Git & PR Workflow
 - Small, focused commits with descriptive messages.
-- Push via the platform [Push Code] button, then [Create PR]. Keep PRs scoped and linked to an issue.
+- Open pull requests against your main branch in your chosen Git hosting (e.g., GitHub/GitLab). Keep PRs scoped and linked to an issue.
 - Code review checklist:
   - Types correct, no `any` where avoidable
   - No inline styles; tokens preserved; media queries unchanged
   - Loading/error/empty states covered
   - Accessibility: labels, roles, keyboard, focus order
   - Tests and typecheck pass
-
-## Working With Integrations (MCP)
-- Connect integrations from the MCP popover:
-  - Builder CMS, Linear, Notion, Sentry, Neon, Prisma Postgres, Supabase, Netlify, Zapier, Context7, Figma plugin
-- Examples:
-  - Error monitoring: [Connect to Sentry](#open-mcp-popover)
-  - Deploy hosting: [Connect to Netlify](#open-mcp-popover)
-  - DB-backed features: [Connect to Neon](#open-mcp-popover) or [Connect to Supabase](#open-mcp-popover)
-  - Docs lookup during dev: [Connect to Context7](#open-mcp-popover)
-  - UI from designs: use the Builder.io Figma plugin
 
 ## Feature Template (End-to-End)
 1. Create types in `client/types` (and `shared/` if used by server).
