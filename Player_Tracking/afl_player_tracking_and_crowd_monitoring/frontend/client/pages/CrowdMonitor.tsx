@@ -360,7 +360,7 @@ export default function CrowdMonitor() {
       <MobileNavigation />
 
       <div className="lg:ml-64 pb-16 lg:pb-0">
-        <div className="px-4 md:px-6 py-4 space-y-4">
+        <div className="p-4 space-y-4">
           {/* Live Clock */}
           <LiveClock
             isLive={isLive}
@@ -370,7 +370,7 @@ export default function CrowdMonitor() {
 
           {/* Overview Cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="rounded-xl shadow-sm">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -387,7 +387,7 @@ export default function CrowdMonitor() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl shadow-sm">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -402,7 +402,7 @@ export default function CrowdMonitor() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl shadow-sm">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -417,7 +417,7 @@ export default function CrowdMonitor() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl shadow-sm">
+            <Card>
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -468,7 +468,7 @@ export default function CrowdMonitor() {
             </TabsList>
 
             <TabsContent value="heatmap" className="space-y-4">
-              <Card className="rounded-xl shadow-sm">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="w-5 h-5" />
@@ -548,7 +548,7 @@ export default function CrowdMonitor() {
               </Card>
 
               {/* Selected Zone Details */}
-              <Card className="rounded-xl shadow-sm">
+              <Card>
                 <CardHeader>
                   <CardTitle>{selectedZone.name}</CardTitle>
                   <CardDescription className="flex items-center gap-4">
@@ -705,7 +705,7 @@ export default function CrowdMonitor() {
 
             <TabsContent value="analytics" className="space-y-4">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Card className="rounded-xl shadow-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <PieChart className="w-5 h-5" />
@@ -791,7 +791,7 @@ export default function CrowdMonitor() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-xl shadow-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <BarChart3 className="w-5 h-5" />
@@ -840,7 +840,7 @@ export default function CrowdMonitor() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-xl shadow-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Clock className="w-5 h-5" />
@@ -909,7 +909,7 @@ export default function CrowdMonitor() {
               </div>
 
               {/* Safety Alerts */}
-              <Card className="rounded-xl shadow-sm">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Shield className="w-5 h-5" />
@@ -974,7 +974,7 @@ export default function CrowdMonitor() {
             </TabsContent>
 
             <TabsContent value="timeline" className="space-y-4">
-              <Card className="rounded-xl shadow-sm">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="w-5 h-5" />
@@ -1085,7 +1085,7 @@ export default function CrowdMonitor() {
               </Card>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <Card className="rounded-xl shadow-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-lg">Peak Hours</CardTitle>
                   </CardHeader>
@@ -1116,7 +1116,7 @@ export default function CrowdMonitor() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-xl shadow-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-lg">Density Trends</CardTitle>
                   </CardHeader>
@@ -1164,7 +1164,7 @@ export default function CrowdMonitor() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-xl shadow-sm">
+                <Card>
                   <CardHeader>
                     <CardTitle className="text-lg">Capacity Insights</CardTitle>
                   </CardHeader>
