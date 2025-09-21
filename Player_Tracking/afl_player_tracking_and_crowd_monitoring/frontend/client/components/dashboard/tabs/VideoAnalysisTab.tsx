@@ -62,11 +62,21 @@ export default function VideoAnalysisTab({
       {/* File input */}
       <div className="space-y-3 p-4 border rounded-xl bg-white/90 shadow-sm">
         <input
+          id="video-file-input"
           type="file"
           accept="video/*"
           onChange={onFileSelect}
-          className="block w-full text-sm text-gray-700"
+          className="hidden"
         />
+        <label
+          htmlFor="video-file-input"
+          className="flex flex-col items-center justify-center h-40 rounded-xl border-2 border-dashed border-gray-300 text-center cursor-pointer hover:bg-gray-50"
+        >
+          <span className="text-sm font-medium text-gray-700">
+            {selectedVideoFile ? selectedVideoFile.name : "Click to upload or choose a video"}
+          </span>
+          <span className="text-xs text-gray-500">MP4, MOV • up to 500MB</span>
+        </label>
 
         {/* ✅ Checklist for services */}
         <div className="flex flex-col space-y-2 mt-2">
