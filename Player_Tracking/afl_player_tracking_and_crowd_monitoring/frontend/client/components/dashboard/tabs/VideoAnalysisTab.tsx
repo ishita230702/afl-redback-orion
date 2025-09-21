@@ -58,9 +58,9 @@ export default function VideoAnalysisTab({
   };
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 md:p-6 space-y-6">
       {/* File input */}
-      <div className="space-y-2">
+      <div className="space-y-3 p-4 border rounded-xl bg-white/90 shadow-sm">
         <input
           type="file"
           accept="video/*"
@@ -93,14 +93,14 @@ export default function VideoAnalysisTab({
             selectedVideoFile && onAnalyze(selectedVideoFile, runPlayer, runCrowd)
           }
           disabled={isDisabled}
-          className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+          className="h-10 px-4 bg-gradient-to-r from-purple-600 to-orange-600 text-white rounded-md disabled:bg-gray-400"
         >
           {isVideoUploading || isVideoAnalyzing ? "Analyzing..." : "Analyze"}
         </button>
 
         {isVideoUploading && (
-          <p className="text-sm text-gray-500">
-            Uploading... {videoUploadProgress}%
+          <p className="text-sm text-gray-600">
+            Uploading… {videoUploadProgress}%
           </p>
         )}
         {videoAnalysisError && (
@@ -130,7 +130,7 @@ export default function VideoAnalysisTab({
             {completedAnalyses.map((video) => (
               <div
                 key={video.id}
-                className="flex items-center justify-between p-2 border rounded"
+                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
               >
                 <div className="truncate max-w-xs">
                   <span className="font-medium truncate block">
@@ -152,7 +152,7 @@ export default function VideoAnalysisTab({
                       setActiveTab("performance");
                     }}
                     disabled={video.status !== "Completed"}
-                    className="px-2 py-1 bg-green-500 text-white rounded disabled:bg-gray-300"
+                    className="h-9 px-3 bg-green-600 text-white rounded-md disabled:bg-gray-300"
                   >
                     Player Performance
                   </button>
@@ -162,13 +162,13 @@ export default function VideoAnalysisTab({
                       setActiveTab("crowd");
                     }}
                     disabled={video.status !== "Completed"}
-                    className="px-2 py-1 bg-purple-500 text-white rounded disabled:bg-gray-300"
+                    className="h-9 px-3 bg-purple-600 text-white rounded-md disabled:bg-gray-300"
                   >
                     Crowd Monitor
                   </button>
                   <button
                     onClick={() => handleDelete(video.id)}
-                    className="px-2 py-1 bg-red-500 text-white rounded"
+                    className="h-9 px-3 bg-red-600 text-white rounded-md"
                   >
                     Delete
                   </button>
