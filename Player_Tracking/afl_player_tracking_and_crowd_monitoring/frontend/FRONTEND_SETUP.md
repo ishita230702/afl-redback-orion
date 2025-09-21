@@ -8,32 +8,34 @@ This guide explains how to set up, run, understand, and extend the AFL Player Tr
 
 ## 1) Prerequisites
 - Node.js 18+ (22+ recommended)
-- pnpm (Corepack-managed). If not present: `npm i -g corepack && corepack enable`.
+- npm (bundled with Node.js)
 - Git access to the repository
 
-## 2) Install and Run (Local)
+## 2) Install and Run (Local) with npm
 From the frontend folder:
 
 ```bash
 cd Player_Tracking/afl_player_tracking_and_crowd_monitoring/frontend
-pnpm install --no-frozen-lockfile
-pnpm dev
+npm install
+npm run dev
 ```
 
 - Local dev server: http://localhost:8080/
 - Vite serves the SPA; Express is attached as middleware so API routes are available at `/api/*` in development.
 
+Note: This repository also contains a `pnpm-lock.yaml`. Using npm will ignore that file. If your environment warns about mixed lockfiles, you can safely proceed with npm, or remove the pnpm lockfile in your local clone.
+
 ### Production build and run
 ```bash
-pnpm build         # builds client to dist/spa and server to dist/server
-pnpm start         # serves dist via Express (node dist/server/node-build.mjs)
+npm run build       # builds client to dist/spa and server to dist/server
+npm start           # serves dist via Express (node dist/server/node-build.mjs)
 ```
 - Production server reads `process.env.PORT` (defaults 3000).
 
 ### Useful scripts
-- `pnpm test` – run Vitest tests
-- `pnpm typecheck` – TypeScript type checking
-- `pnpm format.fix` – format code with Prettier
+- `npm test` – run Vitest tests
+- `npm run typecheck` – TypeScript type checking
+- `npm run format.fix` – format code with Prettier
 
 ## 3) Environment Variables
 Environment variables are consumed in the Express server.
@@ -139,9 +141,9 @@ const { data } = await API.get("/players");
 - See `OAUTH_SETUP.md` for complete setup
 
 ## 9) Testing and Quality
-- Unit tests: `pnpm test` (Vitest)
-- Types: `pnpm typecheck`
-- Formatting: `pnpm format.fix`
+- Unit tests: `npm test` (Vitest)
+- Types: `npm run typecheck`
+- Formatting: `npm run format.fix`
 
 Suggested conventions:
 - Keep components small and cohesive
@@ -150,17 +152,17 @@ Suggested conventions:
 - Avoid TODO/placeholder comments; implement real logic
 
 ## 10) Build and Deploy
-- `pnpm build` outputs:
+- `npm run build` outputs:
   - SPA: `dist/spa`
   - Server: `dist/server/node-build.mjs`
-- `pnpm start` serves both via Express
+- `npm start` serves both via Express
 
 Deployment options:
-- Host on any Node-capable environment or platform (e.g., your VM, Docker, popular PaaS). Configure environment variables in that environment and run `pnpm start`.
+- Host on any Node-capable environment or platform. Configure environment variables in that environment and run `npm start`.
 
 ## 11) Troubleshooting (Common Issues)
 - Install fails at repo root: run commands inside `frontend/` (this app’s package.json lives here)
-- Lockfile errors: use `pnpm install --no-frozen-lockfile`
+- Mixed lockfile warnings: npm ignores `pnpm-lock.yaml`; proceed with npm or remove that file locally
 - Warning: `Using default JWT_SECRET` – set `JWT_SECRET` before production
 - 401s from API: token expired or invalid; the app will redirect to `/login`
 - Wrong API URL: update `client/api/axiosInstance.ts` `baseURL` to your backend
@@ -173,8 +175,8 @@ Deployment options:
 4) Use `API` for data fetching; model response types in `client/types`
 5) Style with Tailwind and UI components under `client/components/ui`
 6) Add basic tests (Vitest) if applicable
-7) Run `pnpm typecheck`, `pnpm test`, `pnpm format.fix`
-8) Verify locally (`pnpm dev`), then build (`pnpm build`) if needed
+7) Run `npm run typecheck`, `npm test`, `npm run format.fix`
+8) Verify locally (`npm run dev`), then build (`npm run build`) if needed
 
 ## 13) Useful Endpoints (Dev)
 - `GET /api/ping` – returns `{ message: PING_MESSAGE || "ping" }`
