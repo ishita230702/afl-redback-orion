@@ -96,7 +96,7 @@ export default function PlayerPerformanceTab({ upload }: PlayerPerformanceTabPro
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 md:p-6">
       <div className="mb-4">
         <h2 className="text-xl font-bold">
           Player Performance – {upload.original_filename}
@@ -120,7 +120,7 @@ export default function PlayerPerformanceTab({ upload }: PlayerPerformanceTabPro
 
       <div>
         <h2 className="text-lg font-semibold mb-2">Player Stats</h2>
-        <table className="w-full border">
+        <table className="w-full border rounded-lg overflow-hidden bg-white">
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2">Player ID</th>
@@ -157,8 +157,8 @@ export default function PlayerPerformanceTab({ upload }: PlayerPerformanceTabPro
       </div>
 
       {selectedPlayer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded shadow-lg max-w-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center">
+          <div className="bg-white p-6 rounded-xl shadow-lg max-w-lg w-full">
             <h3 className="text-lg font-semibold mb-2">
               Player {selectedPlayer.player_id} Details
             </h3>
@@ -179,7 +179,7 @@ export default function PlayerPerformanceTab({ upload }: PlayerPerformanceTabPro
 
             <button
               onClick={() => setSelectedPlayer(null)}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+              className="mt-4 h-10 px-4 bg-gradient-to-r from-purple-600 to-orange-600 text-white rounded-md"
             >
               Close
             </button>
