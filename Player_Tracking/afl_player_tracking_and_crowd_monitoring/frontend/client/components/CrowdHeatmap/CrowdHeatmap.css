@@ -1,0 +1,151 @@
+/* Responsive, class-based styling for the heatmap */
+
+.heatmap-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.heatmap-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0 8px;
+}
+
+.heatmap-title {
+  margin: 0;
+}
+
+.heatmap-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* Canvas with stable aspect ratio so overlays line up while loading/resizing */
+.heatmap-canvas {
+  position: relative;
+  aspect-ratio: 16/11;
+  width: 100%;
+  overflow: hidden;
+}
+
+.stadium-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Heat blobs scale with viewport via clamp() */
+.heat-blob {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  width: clamp(70px, 11vw, 140px);
+  height: clamp(70px, 11vw, 140px);
+  filter: blur(10px);
+  mix-blend-mode: screen;
+}
+
+/* enable clicking on heat blobs */
+.heat-blob.clickable { 
+  pointer-events: auto; 
+  cursor: pointer; 
+}
+
+/* simple panel styling */
+.zone-history-panel {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #111827; 
+}
+.zone-history { margin-bottom: 10px; }
+.zone-history h4 { margin: 0 0 6px; font-size: 14px; }
+
+
+/* Zone labels */
+.heat-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-size: clamp(11px, 1.6vw, 14px);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.8);
+  pointer-events: none;
+}
+
+/* Timeline and updated label */
+.heatmap-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.heatmap-range { width: 100%; }
+.heatmap-updated { font-size: 13px; opacity: 0.85; }
+
+/* Legend */
+.heatmap-legend {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legend-right {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Small play/pause + prev/next controls */
+.transport {
+  display: flex;
+  gap: 6px;
+  margin-left: 12px;
+}
+
+.transport button {
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Save/Replay button styles */
+.replay-controls button {
+  color: #ffffff;            /* white text */
+ 
+}
+
+.replay-controls button:hover {
+  background: #1d4ed8;       /* darker blue on hover */
+}
+
+.replay-controls {
+  margin: 12px 0;
+  display: flex;
+  gap: 10px;
+}
+
+
+.transport button:hover { background: #f5f5f5; }

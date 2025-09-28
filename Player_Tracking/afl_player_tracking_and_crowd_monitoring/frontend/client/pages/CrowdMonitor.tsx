@@ -1,3 +1,4 @@
+import CrowdHeatmap from '../components/CrowdHeatmap/CrowdHeatmap.jsx';
 import { useState, useEffect } from "react";
 import {
   Card,
@@ -479,7 +480,9 @@ export default function CrowdMonitor() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {/* Stadium Heat Map */}
+                  <CardContent>
+                  <CrowdHeatmap />
+                </CardContent>
                   <div className="relative bg-green-100 rounded-lg p-4 min-h-80 overflow-hidden">
                     {/* Field */}
                     <div className="absolute inset-8 border-2 border-green-600 rounded-lg bg-green-200">
